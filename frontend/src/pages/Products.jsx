@@ -237,7 +237,7 @@ const Products = () => {
                 </Container>
             </Box>
             
-            <Container maxWidth={false} sx={{ px: 4 }}>
+            <Container maxWidth={false} sx={{ px: 4, mb: 8 }}>
                 <Box sx={{ mb: 4, display: 'flex', alignItems: 'center' }}>
                     {currentCategory !== 'main' && (
                         <IconButton onClick={handleBackClick} sx={{ mr: 2 }}>
