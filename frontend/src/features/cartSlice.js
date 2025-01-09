@@ -161,7 +161,13 @@ export const clearCart = createAsyncThunk(
 
 export const initializeUserCart = createAsyncThunk(
     'cart/initializeUserCart',
-    async (_, { getState, dispatch }) => {
+    async ({ userId }, { getState, dispatch }) => {
+        // If no userId is provided, just clear the cart
+        if (!userId) {
+            localStorage.removeItem('guestCart');
+            return [];
+        }
+
         const guestCart = getGuestCart();
         if (guestCart.length > 0) {
             // Add each guest cart item to the user's cart
@@ -175,9 +181,12 @@ export const initializeUserCart = createAsyncThunk(
             }
             // Clear the guest cart
             localStorage.removeItem('guestCart');
+            return getState().cart.items;
         }
-        // Fetch the user's cart
-        return dispatch(fetchCart()).unwrap();
+        
+        // If there's no guest cart to migrate, just fetch the user's cart
+        const response = await api.get('/cart');
+        return response.data.items || [];
     }
 );
 

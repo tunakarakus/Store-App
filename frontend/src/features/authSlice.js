@@ -20,12 +20,10 @@ export const verifyToken = createAsyncThunk(
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                throw new Error('No token found');
+                return null;
             }
             const response = await api.get('/users/profile');
             const userData = { ...response.data, token };
-            // Initialize user's cart after successful token verification
-            dispatch(initializeUserCart({ userId: userData._id }));
             return userData;
         } catch (error) {
             localStorage.removeItem('token');
@@ -64,7 +62,7 @@ export const login = createAsyncThunk(
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data));
                 // Initialize user's cart after successful login
-                dispatch(initializeUserCart({ userId: response.data._id }));
+                await dispatch(initializeUserCart({ userId: response.data._id }));
             }
             return response.data;
         } catch (error) {
@@ -107,16 +105,21 @@ const authSlice = createSlice({
             })
             .addCase(verifyToken.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
-                state.token = action.payload.token;
+                if (action.payload) {
+                    state.user = action.payload;
+                    state.token = action.payload.token;
+                    localStorage.setItem('user', JSON.stringify(action.payload));
+                } else {
+                    state.user = null;
+                    state.token = null;
+                }
                 state.error = null;
-                localStorage.setItem('user', JSON.stringify(action.payload));
             })
             .addCase(verifyToken.rejected, (state, action) => {
                 state.loading = false;
                 state.user = null;
                 state.token = null;
-                state.error = action.payload;
+                state.error = action.payload ? action.payload : null;
             })
             // Register
             .addCase(register.pending, (state) => {

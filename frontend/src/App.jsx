@@ -9,6 +9,7 @@ import store from './app/store';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { verifyToken } from './features/authSlice';
+import { fetchCart } from './features/cartSlice';
 
 // Import pages
 import Home from './pages/Home';
@@ -31,6 +32,7 @@ const AppContent = () => {
 
     useEffect(() => {
         dispatch(verifyToken());
+        dispatch(fetchCart());
     }, [dispatch]);
 
     return (
