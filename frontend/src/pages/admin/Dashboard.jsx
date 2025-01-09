@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     Box,
     Typography,
@@ -13,13 +14,23 @@ import {
     People as PeopleIcon,
     ShoppingCart as CartIcon,
 } from '@mui/icons-material';
+import { fetchUsers } from '../../features/userSlice';
+import { fetchProducts } from '../../features/productSlice';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { users } = useSelector((state) => state.users);
+    const { products } = useSelector((state) => state.products);
+
+    useEffect(() => {
+        dispatch(fetchUsers());
+        dispatch(fetchProducts());
+    }, [dispatch]);
 
     const stats = {
-        products: 41,
-        users: 1,
+        products: products.length,
+        users: users.length,
         orders: 1250,
     };
 
