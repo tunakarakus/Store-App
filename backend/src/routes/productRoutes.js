@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
-    getAllProducts,
+    getProducts,
     getProduct,
     createProduct,
     updateProduct,
@@ -9,9 +9,9 @@ const {
 } = require('../controllers/productController');
 const { auth, isAdmin } = require('../middleware/auth');
 
-// Public routes
-router.get('/', getAllProducts);
-router.get('/:id', getProduct);
+// Public routes with optional auth for custom prices
+router.get('/', auth, getProducts);
+router.get('/:id', auth, getProduct);
 
 // Protected routes (admin only)
 router.post('/', auth, isAdmin, createProduct);

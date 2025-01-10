@@ -1,37 +1,39 @@
 const Product = require('../models/Product');
-
-// Create a new product
-const createProduct = async (req, res) => {
-    try {
-        const { name, description, price, imageUrl, category, subcategory, stock } = req.body;
-
-        const product = await Product.create({
-            name,
-            description,
-            price,
-            imageUrl,
-            category,
-            subcategory,
-            stock,
-        });
-
-        res.status(201).json(product);
-    } catch (error) {
-        console.error('Error creating product:', error);
-        res.status(400).json({ 
-            message: error.message || 'Failed to create product',
-            details: error.errors ? Object.values(error.errors).map(err => err.message) : []
-        });
-    }
-};
+const CustomPrice = require('../models/CustomPrice');
 
 // Get all products
-const getAllProducts = async (req, res) => {
+const getProducts = async (req, res) => {
     try {
         const products = await Product.find();
+        
+        // If user is authenticated, fetch their custom prices
+        if (req.user) {
+            const customPrices = await CustomPrice.find({ user: req.user._id });
+            
+            // Create a map of product ID to custom price
+            const customPriceMap = new Map(
+                customPrices.map(cp => [cp.product.toString(), cp.price])
+            );
+            
+            // Add custom prices to products if they exist
+            const productsWithCustomPrices = products.map(product => {
+                const customPrice = customPriceMap.get(product._id.toString());
+                if (customPrice !== undefined) {
+                    return {
+                        ...product.toObject(),
+                        standardPrice: product.price,
+                        price: customPrice
+                    };
+                }
+                return product.toObject();
+            });
+            
+            return res.json(productsWithCustomPrices);
+        }
+        
         res.json(products);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -42,46 +44,66 @@ const getProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
+
+        // If user is authenticated, check for custom price
+        if (req.user) {
+            const customPrice = await CustomPrice.findOne({
+                user: req.user._id,
+                product: product._id
+            });
+
+            if (customPrice) {
+                return res.json({
+                    ...product.toObject(),
+                    standardPrice: product.price,
+                    price: customPrice.price
+                });
+            }
+        }
+
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Create product (admin only)
+const createProduct = async (req, res) => {
+    try {
+        const product = new Product(req.body);
+        const savedProduct = await product.save();
+        res.status(201).json(savedProduct);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// Update product (admin only)
+const updateProduct = async (req, res) => {
+    try {
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
         res.json(product);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-// Update product
-const updateProduct = async (req, res) => {
-    try {
-        const { name, description, price, imageUrl, category, subcategory, stock } = req.body;
-
-        const product = await Product.findById(req.params.id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-
-        product.name = name || product.name;
-        product.description = description || product.description;
-        product.price = price || product.price;
-        product.imageUrl = imageUrl || product.imageUrl;
-        product.category = category || product.category;
-        product.subcategory = subcategory || product.subcategory;
-        product.stock = stock || product.stock;
-
-        const updatedProduct = await product.save();
-        res.json(updatedProduct);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-// Delete product
+// Delete product (admin only)
 const deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findByIdAndDelete(req.params.id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-
-        await Product.findByIdAndDelete(req.params.id);
+        // Also delete any custom prices for this product
+        await CustomPrice.deleteMany({ product: req.params.id });
         res.json({ message: 'Product deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -89,9 +111,9 @@ const deleteProduct = async (req, res) => {
 };
 
 module.exports = {
-    createProduct,
-    getAllProducts,
+    getProducts,
     getProduct,
+    createProduct,
     updateProduct,
-    deleteProduct,
+    deleteProduct
 }; 

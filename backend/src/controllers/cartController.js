@@ -1,4 +1,6 @@
 const Cart = require('../models/Cart');
+const CustomPrice = require('../models/CustomPrice');
+const Product = require('../models/Product');
 
 // Get user's cart
 const getCart = async (req, res) => {
@@ -7,6 +9,37 @@ const getCart = async (req, res) => {
         if (!cart) {
             cart = await Cart.create({ user: req.user._id, items: [] });
         }
+
+        // Fetch current prices for all items
+        const customPrices = await CustomPrice.find({
+            user: req.user._id,
+            product: { $in: cart.items.map(item => item.product) }
+        });
+
+        // Create a map of product ID to custom price
+        const customPriceMap = new Map(
+            customPrices.map(cp => [cp.product.toString(), cp.price])
+        );
+
+        // Update prices in cart items
+        const updatedItems = await Promise.all(cart.items.map(async (item) => {
+            const product = await Product.findById(item.product);
+            if (!product) return null;
+
+            const currentPrice = customPriceMap.get(item.product.toString()) || product.price;
+            
+            // Update the item price if it's different
+            if (item.price !== currentPrice) {
+                item.price = currentPrice;
+            }
+
+            return item;
+        }));
+
+        // Filter out null items (products that no longer exist)
+        cart.items = updatedItems.filter(item => item !== null);
+        await cart.save();
+
         res.json({ items: cart.items });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -19,6 +52,19 @@ const addToCart = async (req, res) => {
         const { productId, quantity, name, price, imageUrl } = req.body;
         let cart = await Cart.findOne({ user: req.user._id });
 
+        // Get current price (including custom price if exists)
+        const customPrice = await CustomPrice.findOne({
+            user: req.user._id,
+            product: productId
+        });
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const currentPrice = customPrice ? customPrice.price : product.price;
+
         if (!cart) {
             cart = await Cart.create({ 
                 user: req.user._id,
@@ -26,7 +72,7 @@ const addToCart = async (req, res) => {
                     product: productId,
                     quantity,
                     name,
-                    price,
+                    price: currentPrice,
                     imageUrl
                 }]
             });
@@ -38,12 +84,13 @@ const addToCart = async (req, res) => {
 
             if (existingItem) {
                 existingItem.quantity += quantity || 1;
+                existingItem.price = currentPrice; // Update price
             } else {
                 cart.items.push({
                     product: productId,
                     quantity: quantity || 1,
                     name,
-                    price,
+                    price: currentPrice,
                     imageUrl
                 });
             }
@@ -74,7 +121,19 @@ const updateCartItem = async (req, res) => {
             return res.status(404).json({ message: 'Item not found in cart' });
         }
 
+        // Get current price
+        const customPrice = await CustomPrice.findOne({
+            user: req.user._id,
+            product: productId
+        });
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
         cartItem.quantity = quantity;
+        cartItem.price = customPrice ? customPrice.price : product.price;
         await cart.save();
 
         res.json({ items: cart.items });

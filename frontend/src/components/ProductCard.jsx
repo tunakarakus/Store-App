@@ -39,8 +39,14 @@ const ProductCard = ({ product }) => {
         navigate(`/products/${product._id}`);
     };
 
-    // Simple price conversion
-    const convertedPrice = convertPrice(product.price, selectedCurrency, exchangeRates);
+    // Get both standard and custom prices
+    const standardPrice = product.standardPrice || product.price;
+    const customPrice = product.price;
+    const hasCustomPrice = product.standardPrice && product.standardPrice !== product.price;
+
+    // Convert both prices
+    const convertedStandardPrice = convertPrice(standardPrice, selectedCurrency, exchangeRates);
+    const convertedCustomPrice = convertPrice(customPrice, selectedCurrency, exchangeRates);
     const currencySymbol = currencies[selectedCurrency];
 
     return (
@@ -68,9 +74,26 @@ const ProductCard = ({ product }) => {
                         {product.name}
                     </Typography>
                     <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6" color="primary">
-                            {currencySymbol}{convertedPrice}
-                        </Typography>
+                        <Box>
+                            {hasCustomPrice && (
+                                <Typography 
+                                    variant="body1" 
+                                    color="text.secondary" 
+                                    sx={{ 
+                                        textDecoration: 'line-through',
+                                        display: 'block'
+                                    }}
+                                >
+                                    {currencySymbol}{convertedStandardPrice}
+                                </Typography>
+                            )}
+                            <Typography 
+                                variant="h6" 
+                                color={hasCustomPrice ? "error" : "primary"}
+                            >
+                                {currencySymbol}{convertedCustomPrice}
+                            </Typography>
+                        </Box>
                         <IconButton 
                             color="primary" 
                             onClick={handleAddToCart}

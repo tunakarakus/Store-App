@@ -4,15 +4,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     Box,
     Typography,
-    Button,
     Grid,
     Paper,
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Chip,
 } from '@mui/material';
 import {
-    Inventory as InventoryIcon,
     People as PeopleIcon,
+    Inventory as InventoryIcon,
     ShoppingCart as CartIcon,
+    AttachMoney as MoneyIcon,
 } from '@mui/icons-material';
 import { fetchUsers } from '../../features/userSlice';
 import { fetchProducts } from '../../features/productSlice';
@@ -53,6 +60,33 @@ const Dashboard = () => {
         }
     };
 
+    const adminActions = [
+        {
+            title: 'Manage Users',
+            icon: <PeopleIcon />,
+            onClick: () => navigate('/admin/users'),
+            color: '#2196f3'
+        },
+        {
+            title: 'Manage Products',
+            icon: <InventoryIcon />,
+            onClick: () => navigate('/admin/products'),
+            color: '#4caf50'
+        },
+        {
+            title: 'Custom Prices',
+            icon: <MoneyIcon />,
+            onClick: () => navigate('/admin/custom-prices'),
+            color: '#ff9800'
+        },
+        {
+            title: 'View Orders',
+            icon: <CartIcon />,
+            onClick: () => navigate('/admin/orders'),
+            color: '#f44336'
+        }
+    ];
+
     return (
         <Box
             sx={{
@@ -71,21 +105,7 @@ const Dashboard = () => {
                 </Typography>
             </Box>
 
-            <Box sx={{ mb: 4, display: 'flex', gap: 2 }}>
-                <Button
-                    variant="outlined"
-                    onClick={() => navigate('/admin/products')}
-                >
-                    Manage Products
-                </Button>
-                <Button
-                    variant="outlined"
-                    onClick={() => navigate('/admin/users')}
-                >
-                    Manage Users
-                </Button>
-            </Box>
-
+            {/* Quick Stats */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper
@@ -93,118 +113,107 @@ const Dashboard = () => {
                             p: 3,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            height: '100%',
+                            alignItems: 'center',
                         }}
                     >
-                        <Box sx={{ mb: 2 }}>
-                            <InventoryIcon color="primary" sx={{ fontSize: 40 }} />
-                        </Box>
-                        <Typography variant="h6" color="text.secondary">
-                            Total Products
-                        </Typography>
-                        <Typography variant="h3" component="div">
-                            {stats.products}
-                        </Typography>
+                        <PeopleIcon sx={{ fontSize: 40, mb: 1, color: 'text.primary' }} />
+                        <Typography variant="h4" color="text.primary">{stats.users}</Typography>
+                        <Typography color="text.secondary">Total Users</Typography>
                     </Paper>
                 </Grid>
-
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper
                         sx={{
                             p: 3,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            height: '100%',
+                            alignItems: 'center',
                         }}
                     >
-                        <Box sx={{ mb: 2 }}>
-                            <PeopleIcon color="primary" sx={{ fontSize: 40 }} />
-                        </Box>
-                        <Typography variant="h6" color="text.secondary">
-                            Total Users
-                        </Typography>
-                        <Typography variant="h3" component="div">
-                            {stats.users}
-                        </Typography>
+                        <InventoryIcon sx={{ fontSize: 40, mb: 1, color: 'text.primary' }} />
+                        <Typography variant="h4" color="text.primary">{stats.products}</Typography>
+                        <Typography color="text.secondary">Products</Typography>
                     </Paper>
                 </Grid>
-
                 <Grid item xs={12} sm={6} md={4}>
                     <Paper
                         sx={{
                             p: 3,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            height: '100%',
+                            alignItems: 'center',
                         }}
                     >
-                        <Box sx={{ mb: 2 }}>
-                            <CartIcon color="primary" sx={{ fontSize: 40 }} />
-                        </Box>
-                        <Typography variant="h6" color="text.secondary">
-                            Total Orders
-                        </Typography>
-                        <Typography variant="h3" component="div">
-                            {stats.orders}
-                        </Typography>
+                        <CartIcon sx={{ fontSize: 40, mb: 1, color: 'text.primary' }} />
+                        <Typography variant="h4" color="text.primary">{stats.orders}</Typography>
+                        <Typography color="text.secondary">Total Orders</Typography>
                     </Paper>
                 </Grid>
             </Grid>
 
-            <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                    Recent Orders
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                    {recentOrders.map((order) => (
-                        <Box
-                            key={order.id}
+            {/* Admin Actions */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                {adminActions.map((action) => (
+                    <Grid item xs={12} sm={6} md={3} key={action.title}>
+                        <Paper
                             sx={{
+                                p: 3,
                                 display: 'flex',
-                                justifyContent: 'space-between',
+                                flexDirection: 'column',
                                 alignItems: 'center',
-                                py: 2,
-                                borderBottom: '1px solid',
-                                borderColor: 'divider',
-                                '&:last-child': {
-                                    borderBottom: 'none',
+                                cursor: 'pointer',
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                    transform: 'scale(1.02)',
                                 },
                             }}
+                            onClick={action.onClick}
                         >
-                            <Box>
-                                <Typography variant="subtitle1">
-                                    {order.customer}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                >
-                                    Order #{order.id}
-                                </Typography>
+                            <Box sx={{ color: action.color, mb: 2 }}>
+                                {action.icon}
                             </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 2,
-                                }}
-                            >
-                                <Typography variant="subtitle1">
-                                    ${order.amount.toFixed(2)}
-                                </Typography>
-                                <Chip
-                                    label={order.status}
-                                    color={getStatusColor(order.status)}
-                                    size="small"
-                                />
-                            </Box>
-                        </Box>
-                    ))}
-                </Box>
-            </Paper>
+                            <Typography variant="h6" align="center">
+                                {action.title}
+                            </Typography>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Recent Orders */}
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h5" gutterBottom>
+                    Recent Orders
+                </Typography>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Order ID</TableCell>
+                                <TableCell>Customer</TableCell>
+                                <TableCell>Amount</TableCell>
+                                <TableCell>Status</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {recentOrders.map((order) => (
+                                <TableRow key={order.id}>
+                                    <TableCell>#{order.id}</TableCell>
+                                    <TableCell>{order.customer}</TableCell>
+                                    <TableCell>${order.amount}</TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={order.status}
+                                            color={getStatusColor(order.status)}
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
         </Box>
     );
 };

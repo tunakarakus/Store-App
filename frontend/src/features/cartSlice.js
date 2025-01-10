@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../services/api';
+import { fetchProducts } from './productSlice';
 
 // Helper functions for guest cart
 const getGuestCart = () => {
@@ -190,6 +191,26 @@ export const initializeUserCart = createAsyncThunk(
     }
 );
 
+export const refreshCart = createAsyncThunk(
+    'cart/refreshCart',
+    async (_, { dispatch, rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return getGuestCart();
+            }
+
+            const response = await api.get('/cart');
+            return response.data.items || [];
+        } catch (error) {
+            if (!error.response) {
+                throw error;
+            }
+            return rejectWithValue(error.response.data.message || 'Failed to refresh cart');
+        }
+    }
+);
+
 const cartSlice = createSlice({
     name: 'cart',
     initialState: {
@@ -294,6 +315,20 @@ const cartSlice = createSlice({
             .addCase(initializeUserCart.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || 'An error occurred';
+            })
+            // Handle refreshCart
+            .addCase(refreshCart.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(refreshCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload;
+                state.error = null;
+            })
+            .addCase(refreshCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });

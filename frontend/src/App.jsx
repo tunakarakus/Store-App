@@ -27,6 +27,7 @@ import AdminProducts from './pages/admin/Products';
 import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
 import AdminUsers from './pages/admin/Users';
+import CustomPrices from './pages/admin/CustomPrices';
 
 const AppContent = () => {
     const dispatch = useDispatch();
@@ -101,6 +102,14 @@ const AppContent = () => {
                         element={
                             <ProtectedRoute requireAdmin={true}>
                                 <AdminUsers />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/custom-prices"
+                        element={
+                            <ProtectedRoute requireAdmin={true}>
+                                <CustomPrices />
                             </ProtectedRoute>
                         }
                     />

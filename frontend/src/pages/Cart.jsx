@@ -26,7 +26,7 @@ import {
     Delete as DeleteIcon,
     ShoppingCartCheckout as ShoppingCartCheckoutIcon,
 } from '@mui/icons-material';
-import { removeFromCart, updateCartItem, fetchCart, updateQuantityLocally } from '../features/cartSlice';
+import { removeFromCart, updateCartItem, fetchCart, updateQuantityLocally, refreshCart } from '../features/cartSlice';
 import { convertPrice, fetchExchangeRates } from '../features/currencySlice';
 
 const currencies = {
@@ -48,6 +48,16 @@ const Cart = () => {
     useEffect(() => {
         dispatch(fetchCart());
     }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(refreshCart());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (selectedCurrency) {
+            dispatch(refreshCart());
+        }
+    }, [selectedCurrency, dispatch]);
 
     // Debounced update function
     const debouncedUpdate = useCallback(
