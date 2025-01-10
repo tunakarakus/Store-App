@@ -10,14 +10,20 @@ import {
 } from '@mui/material';
 import { AddShoppingCart as AddShoppingCartIcon } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../features/cartSlice';
 
-const ProductCard = ({ product, onProductClick }) => {
+const ProductCard = ({ product }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleAddToCart = (e) => {
         e.stopPropagation();
         dispatch(addToCart({ ...product, quantity: 1 }));
+    };
+
+    const handleProductClick = () => {
+        navigate(`/products/${product._id}`);
     };
 
     return (
@@ -32,7 +38,7 @@ const ProductCard = ({ product, onProductClick }) => {
                 }
             }}
         >
-            <CardActionArea onClick={() => onProductClick(product)}>
+            <CardActionArea onClick={handleProductClick}>
                 <CardMedia
                     component="img"
                     height="200"

@@ -24,7 +24,6 @@ import {
 import CategoryCard from '../components/CategoryCard';
 import ProductCard from '../components/ProductCard';
 import { fetchProducts } from '../features/productSlice';
-import ProductDetail from '../components/ProductDetail';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const categories = {
@@ -66,8 +65,6 @@ const Products = () => {
     const [currentCategory, setCurrentCategory] = useState(categoryParam || 'main');
     const [currentSubcategory, setCurrentSubcategory] = useState(subcategoryParam || null);
     const [navigationHistory, setNavigationHistory] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [detailOpen, setDetailOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -129,7 +126,7 @@ const Products = () => {
                     }}
                     sx={{ cursor: 'pointer' }}
                 >
-                    Categories
+                    Products
                 </Link>
             );
             items.push(
@@ -249,11 +246,6 @@ const Products = () => {
                     </Breadcrumbs>
                 </Box>
                 {renderContent()}
-                <ProductDetail 
-                    product={selectedProduct}
-                    open={detailOpen}
-                    onClose={handleDetailClose}
-                />
             </Container>
         </>
     );
