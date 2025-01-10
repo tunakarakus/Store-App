@@ -123,7 +123,7 @@ const Navbar = () => {
                             }
                         }}
                     >
-                        About
+                        About Us
                     </Button>
                     <Button
                         component={RouterLink}

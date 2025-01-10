@@ -13,6 +13,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Global focus styles */
+* {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+}
+
+*:focus-visible {
+  outline: none !important;
+}
+
+/* Remove focus ring from Material-UI components */
+.MuiButtonBase-root:focus {
+  outline: none !important;
+}
+
+.MuiButtonBase-root:focus-visible {
+  outline: none !important;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

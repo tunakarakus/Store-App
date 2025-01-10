@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 import debounce from 'lodash/debounce';
@@ -44,6 +44,8 @@ const Cart = () => {
     const dispatch = useDispatch();
     const { items, loading: cartLoading, error: cartError } = useSelector((state) => state.cart);
     const { selectedCurrency, exchangeRates } = useSelector((state) => state.currency);
+    const updateQueue = useRef({});
+    const updateTimeoutRef = useRef({});
 
     useEffect(() => {
         dispatch(fetchCart());
@@ -63,18 +65,40 @@ const Cart = () => {
     const debouncedUpdate = useCallback(
         debounce((productId, newQuantity) => {
             dispatch(updateCartItem({ productId, quantity: newQuantity }));
-        }, 500),
+        }, 200),
         [dispatch]
     );
 
     const handleUpdateQuantity = (productId, newQuantity) => {
         if (newQuantity >= 1) {
+            // Clear any pending timeout for this product
+            if (updateTimeoutRef.current[productId]) {
+                clearTimeout(updateTimeoutRef.current[productId]);
+            }
+
             // Update UI immediately
             dispatch(updateQuantityLocally({ productId, quantity: newQuantity }));
-            // Debounce the API call
-            debouncedUpdate(productId, newQuantity);
+
+            // Set a new timeout for this product
+            updateTimeoutRef.current[productId] = setTimeout(async () => {
+                try {
+                    await dispatch(updateCartItem({ productId, quantity: newQuantity })).unwrap();
+                } catch (error) {
+                    // If the update fails, refresh the cart to get the correct state
+                    dispatch(fetchCart());
+                }
+            }, 500);
         }
     };
+
+    // Cleanup timeouts on unmount
+    useEffect(() => {
+        return () => {
+            Object.values(updateTimeoutRef.current).forEach(timeout => {
+                clearTimeout(timeout);
+            });
+        };
+    }, []);
 
     const handleRemoveItem = (productId) => {
         dispatch(removeFromCart(productId));
@@ -227,15 +251,50 @@ const Cart = () => {
                                                 >
                                                     <RemoveIcon />
                                                 </IconButton>
-                                                <Typography sx={{ mx: 2 }}>
-                                                    {item.quantity}
-                                                </Typography>
+                                                <input
+                                                    type="number"
+                                                    value={item.quantity}
+                                                    onChange={(e) => {
+                                                        const value = parseInt(e.target.value);
+                                                        if (!isNaN(value) && value >= 1) {
+                                                            handleUpdateQuantity(item.product, value);
+                                                        }
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        const value = parseInt(e.target.value);
+                                                        if (isNaN(value) || value < 1) {
+                                                            handleUpdateQuantity(item.product, 1);
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        width: '40px',
+                                                        textAlign: 'center',
+                                                        padding: '8px',
+                                                        backgroundColor: '#fff',
+                                                        color: '#000',
+                                                        border: '1px solid #ddd',
+                                                        borderRadius: '4px',
+                                                        fontSize: '14px',
+                                                        margin: '0 8px',
+                                                        '-moz-appearance': 'textfield',
+                                                    }}
+                                                    min="1"
+                                                />
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleUpdateQuantity(item.product, item.quantity + 1)}
                                                 >
                                                     <AddIcon />
                                                 </IconButton>
+                                                <style>
+                                                    {`
+                                                        input::-webkit-outer-spin-button,
+                                                        input::-webkit-inner-spin-button {
+                                                            -webkit-appearance: none;
+                                                            margin: 0;
+                                                        }
+                                                    `}
+                                                </style>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right">
