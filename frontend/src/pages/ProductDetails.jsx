@@ -79,29 +79,94 @@ const ProductDetails = () => {
 
     return (
         <>
-            <Box sx={{ bgcolor: '#2A3942', color: 'white', py: 4 }}>
-                <Container maxWidth="lg">
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <IconButton color="inherit" onClick={handleBack}>
-                            <ArrowBackIcon />
-                        </IconButton>
-                        <Breadcrumbs separator="›" sx={{ color: 'white' }}>
-                            <Link color="inherit" sx={{ cursor: 'pointer' }} onClick={() => navigate('/products')}>
-                                Products
-                            </Link>
-                            <Link color="inherit" sx={{ cursor: 'pointer' }} onClick={() => navigate(`/products?category=${encodeURIComponent(product.category)}`)}>
-                                {product.category}
-                            </Link>
-                            <Link color="inherit" sx={{ cursor: 'pointer' }} onClick={() => navigate(`/products?category=${encodeURIComponent(product.category)}&subcategory=${encodeURIComponent(product.subcategory)}`)}>
-                                {product.subcategory}
-                            </Link>
-                            <Typography color="inherit">{product.name}</Typography>
-                        </Breadcrumbs>
-                    </Box>
-                </Container>
-            </Box>
-
             <Container maxWidth="lg" sx={{ mt: 4, mb: 16 }}>
+                <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <IconButton onClick={handleBack} size="small">
+                        <ArrowBackIcon />
+                    </IconButton>
+                    <Breadcrumbs 
+                        separator="›" 
+                        sx={{ 
+                            color: 'text.secondary',
+                            '& .MuiBreadcrumbs-separator': {
+                                mx: 0.5
+                            },
+                            '& .MuiBreadcrumbs-li': {
+                                display: 'flex',
+                                alignItems: 'center'
+                            }
+                        }}
+                    >
+                        <Link
+                            component="button"
+                            variant="body2"
+                            sx={{
+                                cursor: 'pointer',
+                                fontSize: '0.875rem',
+                                padding: '4px 6px',
+                                textDecoration: 'none',
+                                border: 'none',
+                                background: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                color: 'inherit',
+                                minHeight: 0
+                            }}
+                            onClick={() => navigate('/products')}
+                        >
+                            Products
+                        </Link>
+                        <Link
+                            component="button"
+                            variant="body2"
+                            sx={{
+                                cursor: 'pointer',
+                                fontSize: '0.875rem',
+                                padding: '4px 6px',
+                                textDecoration: 'none',
+                                border: 'none',
+                                background: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                color: 'inherit',
+                                minHeight: 0
+                            }}
+                            onClick={() => navigate(`/products?category=${encodeURIComponent(product.category)}`)}
+                        >
+                            {product.category}
+                        </Link>
+                        <Link
+                            component="button"
+                            variant="body2"
+                            sx={{
+                                cursor: 'pointer',
+                                fontSize: '0.875rem',
+                                padding: '4px 6px',
+                                textDecoration: 'none',
+                                border: 'none',
+                                background: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                color: 'inherit',
+                                minHeight: 0
+                            }}
+                            onClick={() => navigate(`/products?category=${encodeURIComponent(product.category)}&subcategory=${encodeURIComponent(product.subcategory)}`)}
+                        >
+                            {product.subcategory}
+                        </Link>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                fontSize: '0.875rem',
+                                padding: '4px 6px',
+                                color: 'text.primary'
+                            }}
+                        >
+                            {product.name}
+                        </Typography>
+                    </Breadcrumbs>
+                </Box>
+
                 <Grid container spacing={6}>
                     {/* Product Image */}
                     <Grid item xs={12} md={6}>

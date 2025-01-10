@@ -149,10 +149,9 @@ const MegaMenu = ({ onClose }) => {
             >
                 <Typography
                     component={RouterLink}
-                    to="/products"
+                    to="/products?view=all"
                     onClick={() => {
                         onClose();
-                        window.location.href = '/products';
                     }}
                     sx={{ 
                         color: 'text.primary',
