@@ -14,6 +14,7 @@ import {
     MenuItem,
     TextField,
     Paper,
+    CircularProgress,
 } from '@mui/material';
 import {
     Category as CategoryIcon,
@@ -104,9 +105,14 @@ const Products = () => {
     };
 
     const handleBackClick = () => {
-        navigate('/products');
-        setCurrentCategory('main');
-        setCurrentSubcategory(null);
+        if (currentSubcategory) {
+            navigate(`/products?category=${encodeURIComponent(currentCategory)}`);
+            setCurrentSubcategory(null);
+        } else {
+            navigate('/products');
+            setCurrentCategory('main');
+            setCurrentSubcategory(null);
+        }
     };
 
     const filteredProducts = products.filter(product => {
@@ -283,34 +289,162 @@ const Products = () => {
         );
     };
 
+    const renderPageHeader = () => {
+        return (
+            <>
+                <Box 
+                    sx={{ 
+                        bgcolor: '#2A3942',
+                        color: 'white',
+                        py: 6,
+                        mb: 4,
+                        textAlign: 'center',
+                        width: '100vw',
+                        position: 'relative',
+                        marginLeft: 'calc(-50vw + 50%)',
+                        marginRight: 'calc(-50vw + 50%)',
+                        left: 0,
+                        right: 0,
+                    }}
+                >
+                    <Container maxWidth="lg">
+                        <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 0 }}>
+                            {viewParam === 'all'
+                                ? 'All Products'
+                                : currentSubcategory 
+                                    ? categories[currentCategory]?.find(c => c.id === currentSubcategory)?.title
+                                    : currentCategory === 'main'
+                                        ? 'Products'
+                                        : categories.main.find(c => c.id === currentCategory)?.title
+                            }
+                        </Typography>
+                        {currentCategory === 'main' && !viewParam && (
+                            <Typography variant="h6" color="inherit" sx={{ opacity: 0.8, mt: 2 }}>
+                                Browse our selection of high-quality networking products
+                            </Typography>
+                        )}
+                    </Container>
+                </Box>
+                {(currentCategory !== 'main' || viewParam === 'all') && (
+                    <Container maxWidth="lg">
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <IconButton 
+                                onClick={handleBackClick}
+                                sx={{ 
+                                    mr: 2,
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        bgcolor: 'rgba(0, 0, 0, 0.04)',
+                                    }
+                                }}
+                            >
+                                <ArrowBackIcon />
+                            </IconButton>
+                            <Breadcrumbs separator="›">
+                                {renderBreadcrumbs()}
+                            </Breadcrumbs>
+                        </Box>
+                    </Container>
+                )}
+            </>
+        );
+    };
+
     const renderContent = () => {
         if (loading) {
             return (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                    <Typography>Loading products...</Typography>
+                    <CircularProgress />
                 </Box>
             );
         }
 
-        if ((currentSubcategory || viewParam === 'all') && filteredProducts.length === 0) {
-            return (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                    <Typography>No products found.</Typography>
-                </Box>
-            );
-        }
-
-        if (currentSubcategory || viewParam === 'all') {
+        if (viewParam === 'all' || currentSubcategory) {
             return (
                 <>
-                    {renderFilters()}
+                    <Paper sx={{ p: 2, mb: 3 }}>
+                        <Grid container spacing={2} alignItems="center">
+                            {!viewParam && (
+                                <Grid item xs="auto">
+                                    <IconButton onClick={handleBackClick}>
+                                        <ArrowBackIcon />
+                                    </IconButton>
+                                </Grid>
+                            )}
+                            <Grid item xs={12} md={3}>
+                                <TextField
+                                    fullWidth
+                                    label="Search Products"
+                                    variant="outlined"
+                                    value={filterText}
+                                    onChange={(e) => setFilterText(e.target.value)}
+                                    size="small"
+                                />
+                            </Grid>
+                            {viewParam === 'all' && (
+                                <>
+                                    <Grid item xs={12} md={2}>
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Category</InputLabel>
+                                            <Select
+                                                value={filterCategory}
+                                                label="Category"
+                                                onChange={handleCategoryFilterChange}
+                                            >
+                                                <MenuItem value="">All Categories</MenuItem>
+                                                {categories.main.map((category) => (
+                                                    <MenuItem key={category.id} value={category.id}>
+                                                        {category.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12} md={2}>
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Subcategory</InputLabel>
+                                            <Select
+                                                value={filterSubcategory}
+                                                label="Subcategory"
+                                                onChange={handleSubcategoryFilterChange}
+                                                disabled={!filterCategory}
+                                            >
+                                                <MenuItem value="">All Subcategories</MenuItem>
+                                                {filterCategory && categories[filterCategory]?.map((subcategory) => (
+                                                    <MenuItem key={subcategory.id} value={subcategory.id}>
+                                                        {subcategory.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                </>
+                            )}
+                            <Grid item xs={12} md={viewParam === 'all' ? 2 : 3}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Sort By</InputLabel>
+                                    <Select
+                                        value={sortBy}
+                                        label="Sort By"
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                    >
+                                        <MenuItem value="name">Name (A-Z)</MenuItem>
+                                        <MenuItem value="price_low">Price (Low to High)</MenuItem>
+                                        <MenuItem value="price_high">Price (High to Low)</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} md={viewParam === 'all' ? 2 : 3}>
+                                <Typography variant="body2" color="text.secondary">
+                                    {filteredProducts.length} products found
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Paper>
                     <Grid container spacing={3}>
                         {filteredProducts.map((product) => (
                             <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
-                                <ProductCard 
-                                    product={product} 
-                                    onProductClick={handleProductClick}
-                                />
+                                <ProductCard product={product} />
                             </Grid>
                         ))}
                     </Grid>
@@ -339,36 +473,115 @@ const Products = () => {
 
     return (
         <>
-            <Box 
-                sx={{ 
-                    bgcolor: '#2A3942',
-                    color: 'white',
-                    py: 6,
-                    mb: 4,
-                    textAlign: 'center'
-                }}
-            >
-                <Container maxWidth="lg">
-                    <Typography variant="h3" component="h1" gutterBottom>
-                        {currentSubcategory 
-                            ? categories[currentCategory]?.find(c => c.id === currentSubcategory)?.title
-                            : currentCategory === 'main' && viewParam === 'all'
-                                ? 'All Products'
-                                : currentCategory === 'main'
-                                    ? 'Products'
-                                    : categories.main.find(c => c.id === currentCategory)?.title
-                        }
-                    </Typography>
-                    {currentCategory === 'main' && !viewParam && (
-                        <Typography variant="h6" color="inherit" sx={{ opacity: 0.8 }}>
-                            Browse our selection of high-quality networking products
-                        </Typography>
-                    )}
-                </Container>
-            </Box>
-            
-            <Container maxWidth={false} sx={{ px: 4, mb: 8 }}>
-                {renderContent()}
+            {renderPageHeader()}
+            <Container maxWidth="lg" sx={{ mb: 8 }}>
+                {(viewParam === 'all' || currentSubcategory) && (
+                    <Paper sx={{ p: 2, mb: 3 }}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} sm>
+                                <TextField
+                                    fullWidth
+                                    label="Search Products"
+                                    variant="outlined"
+                                    value={filterText}
+                                    onChange={(e) => setFilterText(e.target.value)}
+                                    size="small"
+                                />
+                            </Grid>
+                            {viewParam === 'all' && (
+                                <>
+                                    <Grid item xs={12} sm={6} md={2}>
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Category</InputLabel>
+                                            <Select
+                                                value={filterCategory}
+                                                label="Category"
+                                                onChange={handleCategoryFilterChange}
+                                            >
+                                                <MenuItem value="">All Categories</MenuItem>
+                                                {categories.main.map((category) => (
+                                                    <MenuItem key={category.id} value={category.id}>
+                                                        {category.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={2}>
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Subcategory</InputLabel>
+                                            <Select
+                                                value={filterSubcategory}
+                                                label="Subcategory"
+                                                onChange={handleSubcategoryFilterChange}
+                                                disabled={!filterCategory}
+                                            >
+                                                <MenuItem value="">All Subcategories</MenuItem>
+                                                {filterCategory && categories[filterCategory]?.map((subcategory) => (
+                                                    <MenuItem key={subcategory.id} value={subcategory.id}>
+                                                        {subcategory.title}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                </>
+                            )}
+                            <Grid item xs={12} sm={6} md={2}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Sort By</InputLabel>
+                                    <Select
+                                        value={sortBy}
+                                        label="Sort By"
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                    >
+                                        <MenuItem value="name">Name (A-Z)</MenuItem>
+                                        <MenuItem value="price_low">Price (Low to High)</MenuItem>
+                                        <MenuItem value="price_high">Price (High to Low)</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm="auto">
+                                <Typography variant="body2" color="text.secondary">
+                                    {filteredProducts.length} products found
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                )}
+                {currentCategory === 'main' && !viewParam ? (
+                    <Grid container spacing={4}>
+                        {categories.main.map((category) => (
+                            <Grid item xs={12} sm={6} md={4} key={category.id}>
+                                <CategoryCard
+                                    title={category.title}
+                                    icon={category.icon}
+                                    onClick={() => handleCategoryClick(category.id)}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                ) : currentCategory !== 'main' && !currentSubcategory && !viewParam ? (
+                    <Grid container spacing={4}>
+                        {categories[currentCategory]?.map((subcategory) => (
+                            <Grid item xs={12} sm={6} md={4} key={subcategory.id}>
+                                <CategoryCard
+                                    title={subcategory.title}
+                                    icon={subcategory.icon}
+                                    onClick={() => handleCategoryClick(subcategory.id)}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                ) : (
+                    <Grid container spacing={3}>
+                        {filteredProducts.map((product) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                                <ProductCard product={product} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
             </Container>
         </>
     );

@@ -68,7 +68,7 @@ const Login = () => {
                         gutterBottom
                         sx={{ fontWeight: 600, color: 'text.primary', mb: 4 }}
                     >
-                        Login
+                        Sign In
                     </Typography>
 
                     {error && (
@@ -109,7 +109,7 @@ const Login = () => {
                             disabled={loading}
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            {loading ? <CircularProgress size={24} /> : 'Login'}
+                            {loading ? <CircularProgress size={24} /> : 'Sign In'}
                         </Button>
                         <Box sx={{ textAlign: 'center' }}>
                             <Typography variant="body2" color="text.secondary">

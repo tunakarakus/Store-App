@@ -54,7 +54,7 @@ const Footer = () => {
                     {/* Company Info */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="h6" color="text.primary" gutterBottom>
-                            STORE
+                            BC FIBER
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Your trusted source for network infrastructure solutions.
@@ -76,19 +76,25 @@ const Footer = () => {
                         </Box>
                     </Grid>
 
-                    {/* Quick Links */}
+                    {/* Legal Links */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="h6" color="text.primary" gutterBottom>
-                            Quick Links
+                            Legal & Policies
                         </Typography>
-                        <Link component={RouterLink} to="/products" color="text.secondary" display="block" sx={{ mb: 1 }}>
-                            Products
+                        <Link component={RouterLink} to="/institutional" color="text.secondary" display="block" sx={{ mb: 1 }}>
+                            Institutional Clarification Text
                         </Link>
-                        <Link component={RouterLink} to="/about" color="text.secondary" display="block" sx={{ mb: 1 }}>
-                            About Us
+                        <Link component={RouterLink} to="/contact-form" color="text.secondary" display="block" sx={{ mb: 1 }}>
+                            Contact Form Clarification Text
                         </Link>
-                        <Link component={RouterLink} to="/contact" color="text.secondary" display="block" sx={{ mb: 1 }}>
-                            Contact
+                        <Link component={RouterLink} to="/camera-disclosure" color="text.secondary" display="block" sx={{ mb: 1 }}>
+                            Camera Disclosure Text
+                        </Link>
+                        <Link component={RouterLink} to="/employee-disclosure" color="text.secondary" display="block" sx={{ mb: 1 }}>
+                            Employee Candidate Disclosure Text
+                        </Link>
+                        <Link component={RouterLink} to="/cookie-policy" color="text.secondary" display="block" sx={{ mb: 1 }}>
+                            Cookie Policy
                         </Link>
                     </Grid>
 
@@ -108,28 +114,49 @@ const Footer = () => {
                         </Link>
                     </Grid>
 
-                    {/* Contact Info and Currency Selector */}
+                    {/* Email Subscription and Currency Selector */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="h6" color="text.primary" gutterBottom>
-                            Contact Us
+                            Newsletter
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <LocationIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                            <Typography variant="body2" color="text.secondary">
-                                123 Business Street, City, 12345
-                            </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <PhoneIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                            <Typography variant="body2" color="text.secondary">
-                                +1 (555) 123-4567
-                            </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                            <EmailIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                            <Typography variant="body2" color="text.secondary">
-                                info@store.com
-                            </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                            Subscribe to our newsletter to receive updates and special offers.
+                        </Typography>
+                        <Box
+                            component="form"
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 2,
+                                mb: 3
+                            }}
+                        >
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                style={{
+                                    padding: '8px 12px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px',
+                                    fontSize: '14px',
+                                    backgroundColor: '#fff',
+                                    color: '#000'
+                                }}
+                            />
+                            <button
+                                type="submit"
+                                style={{
+                                    padding: '8px 16px',
+                                    backgroundColor: '#c41e3a',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                Subscribe
+                            </button>
                         </Box>
                         <FormControl fullWidth size="small">
                             <InputLabel>Currency</InputLabel>
@@ -150,9 +177,43 @@ const Footer = () => {
 
                 <Divider sx={{ mt: 6, mb: 4 }} />
 
-                <Typography variant="body2" color="text.secondary" align="center">
-                    © {new Date().getFullYear()} STORE. All rights reserved.
-                </Typography>
+                <Box sx={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 2
+                }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ flexShrink: 0 }}>
+                        © {new Date().getFullYear()} BC FIBER. All rights reserved.
+                    </Typography>
+                    <Box 
+                        component="span" 
+                        sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 2,
+                            color: 'text.secondary',
+                            fontSize: '0.875rem',
+                            '& > a': {
+                                color: 'text.secondary',
+                                textDecoration: 'none',
+                                fontSize: 'inherit',
+                                '&:hover': {
+                                    textDecoration: 'underline'
+                                }
+                            }
+                        }}
+                    >
+                        <Link component={RouterLink} to="/site-map">Site Map</Link>
+                        <Box component="span" sx={{ mx: 1, fontSize: 'inherit' }}>|</Box>
+                        <Link component={RouterLink} to="/accessibility">Accessibility</Link>
+                        <Box component="span" sx={{ mx: 1, fontSize: 'inherit' }}>|</Box>
+                        <Link component={RouterLink} to="/privacy">Privacy and Cookies</Link>
+                        <Box component="span" sx={{ mx: 1, fontSize: 'inherit' }}>|</Box>
+                        <Link component={RouterLink} to="/terms">Terms and Conditions</Link>
+                    </Box>
+                </Box>
             </Container>
         </Box>
     );

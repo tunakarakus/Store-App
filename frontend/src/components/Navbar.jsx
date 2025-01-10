@@ -71,7 +71,7 @@ const Navbar = () => {
                             }
                         }}
                     >
-                        STORE
+                        BC FIBER
                     </Typography>
                     <ClickAwayListener onClickAway={handleMegaMenuClose}>
                         <Box 
@@ -220,20 +220,20 @@ const Navbar = () => {
                             </Menu>
                         </>
                     ) : (
-                        <Button
+                        <IconButton
                             component={RouterLink}
                             to="/login"
-                            color="inherit"
-                            startIcon={<PersonIcon sx={{ fontSize: 28 }} />}
                             sx={{ 
                                 ml: 2,
+                                color: 'text.primary',
                                 '&:hover': {
                                     backgroundColor: 'transparent',
+                                    color: 'text.primary',
                                 }
                             }}
                         >
-                            Login
-                        </Button>
+                            <PersonIcon sx={{ fontSize: 28 }} />
+                        </IconButton>
                     )}
                 </Toolbar>
             </Container>

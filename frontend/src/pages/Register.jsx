@@ -117,7 +117,7 @@ const Register = () => {
                         </Button>
                         <Box sx={{ textAlign: 'center' }}>
                             <Link component={RouterLink} to="/login" variant="body2">
-                                Already have an account? Login
+                                Already have an account? Sign In
                             </Link>
                         </Box>
                     </Box>

@@ -97,22 +97,29 @@ const ProductDetails = () => {
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
             <Box sx={{ mb: 4 }}>
-                <Button
-                    startIcon={<ArrowBackIcon />}
-                    onClick={handleBack}
-                    sx={{ mb: 2 }}
-                >
-                    Back
-                </Button>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link color="inherit" onClick={() => navigate('/products')} sx={{ cursor: 'pointer' }}>
-                        Products
-                    </Link>
-                    <Link color="inherit" onClick={() => navigate(`/products?category=${product.category}`)} sx={{ cursor: 'pointer' }}>
-                        {product.category}
-                    </Link>
-                    <Typography color="text.primary">{product.name}</Typography>
-                </Breadcrumbs>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton
+                        onClick={handleBack}
+                        sx={{ 
+                            mr: 2,
+                            color: 'text.primary',
+                            '&:hover': {
+                                bgcolor: 'rgba(0, 0, 0, 0.04)',
+                            }
+                        }}
+                    >
+                        <ArrowBackIcon />
+                    </IconButton>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link color="inherit" onClick={() => navigate('/products')} sx={{ cursor: 'pointer' }}>
+                            Products
+                        </Link>
+                        <Link color="inherit" onClick={() => navigate(`/products?category=${product.category}`)} sx={{ cursor: 'pointer' }}>
+                            {product.category}
+                        </Link>
+                        <Typography color="text.primary">{product.name}</Typography>
+                    </Breadcrumbs>
+                </Box>
             </Box>
 
             <Grid container spacing={4}>
