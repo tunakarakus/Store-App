@@ -17,18 +17,33 @@ import {
     Grid,
     CircularProgress,
     Alert,
+    Container,
 } from '@mui/material';
 import {
     ShoppingCart as CartIcon,
     Add as AddIcon,
     Remove as RemoveIcon,
     Delete as DeleteIcon,
+    ShoppingCartCheckout as ShoppingCartCheckoutIcon,
 } from '@mui/icons-material';
 import { removeFromCart, updateCartItem, fetchCart, updateQuantityLocally } from '../features/cartSlice';
+import { convertPrice, fetchExchangeRates } from '../features/currencySlice';
+
+const currencies = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    AUD: 'A$',
+    CAD: 'C$',
+    CHF: 'Fr',
+    CNY: '¥',
+};
 
 const Cart = () => {
     const dispatch = useDispatch();
-    const { items, loading, error } = useSelector((state) => state.cart);
+    const { items, loading: cartLoading, error: cartError } = useSelector((state) => state.cart);
+    const { selectedCurrency, exchangeRates } = useSelector((state) => state.currency);
 
     useEffect(() => {
         dispatch(fetchCart());
@@ -55,60 +70,82 @@ const Cart = () => {
         dispatch(removeFromCart(productId));
     };
 
-    const calculateTotal = () => {
-        return items.reduce((total, item) => total + item.price * item.quantity, 0);
+    // Function to safely convert and display item price
+    const getItemPrice = (price) => {
+        const numericPrice = parseFloat(price) || 0;
+        if (!exchangeRates || !selectedCurrency) {
+            return numericPrice.toFixed(2);
+        }
+        return convertPrice(numericPrice, selectedCurrency, exchangeRates);
     };
 
-    if (loading) {
+    // Function to safely calculate and display item total
+    const getItemTotal = (price, quantity) => {
+        const numericPrice = parseFloat(price) || 0;
+        if (!exchangeRates || !selectedCurrency) {
+            return (numericPrice * quantity).toFixed(2);
+        }
+        return convertPrice(numericPrice * quantity, selectedCurrency, exchangeRates);
+    };
+
+    const calculateTotal = () => {
+        const total = items.reduce((total, item) => {
+            const price = parseFloat(item.price) || 0;
+            return total + price * item.quantity;
+        }, 0);
+        
+        if (!exchangeRates || !selectedCurrency) {
+            return total.toFixed(2);
+        }
+        return convertPrice(total, selectedCurrency, exchangeRates);
+    };
+
+    const currencySymbol = currencies[selectedCurrency] || '$';
+
+    // Only show loading for cart loading, not for exchange rates
+    if (cartLoading) {
         return (
-            <Box
-                sx={{
-                    width: '100vw',
-                    height: 'calc(100vh - 64px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: 'background.default',
-                }}
-            >
-                <CircularProgress />
-            </Box>
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <CircularProgress />
+                </Box>
+            </Container>
         );
     }
 
-    if (error) {
+    if (cartError) {
         return (
-            <Box
-                sx={{
-                    width: '100vw',
-                    height: 'calc(100vh - 64px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: 'background.default',
-                }}
-            >
-                <Alert severity="error">{error}</Alert>
-            </Box>
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+                <Alert severity="error">{cartError}</Alert>
+            </Container>
         );
     }
 
-    if (items.length === 0) {
+    if (!items || items.length === 0) {
         return (
-            <Box
-                sx={{
-                    width: '100vw',
-                    height: 'calc(100vh - 64px)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: 'background.default',
-                }}
-            >
-                <Box sx={{ textAlign: 'center' }}>
-                    <CartIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 3 }} />
-                    <Typography variant="h5" color="text.primary" gutterBottom>
+            <Container maxWidth="lg" sx={{ 
+                mt: 4, 
+                mb: 8,
+                minHeight: 'calc(100vh - 400px)', // Account for header and footer
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <Box sx={{ 
+                    textAlign: 'center',
+                    py: 8 // Add vertical padding
+                }}>
+                    <CartIcon sx={{ 
+                        fontSize: 100, // Made icon slightly larger
+                        color: 'text.secondary', 
+                        mb: 4 // Increased bottom margin
+                    }} />
+                    <Typography 
+                        variant="h4" // Made text slightly larger
+                        color="text.primary" 
+                        gutterBottom
+                        sx={{ mb: 3 }} // Added more space below text
+                    >
                         Your cart is empty
                     </Typography>
                     <Button
@@ -116,39 +153,38 @@ const Cart = () => {
                         to="/products"
                         variant="contained"
                         size="large"
-                        sx={{ mt: 3 }}
+                        sx={{ mt: 4, px: 4, py: 1.5 }} // Made button more prominent
                     >
                         Continue Shopping
                     </Button>
                 </Box>
-            </Box>
+            </Container>
         );
     }
 
     return (
-        <Box
-            sx={{
-                width: '100vw',
-                minHeight: 'calc(100vh - 64px)',
-                p: 3,
-                bgcolor: 'background.default',
-            }}
-        >
-            <Typography variant="h4" gutterBottom>
+        <Container maxWidth="lg" sx={{ pt: 4, pb: 8 }}>
+            <Typography variant="h4" component="h1" gutterBottom>
                 Shopping Cart
             </Typography>
-
             <Grid container spacing={3}>
+                {/* Product List - Takes 8 columns on medium and larger screens */}
                 <Grid item xs={12} md={8}>
-                    <TableContainer component={Paper}>
-                        <Table>
+                    <TableContainer 
+                        component={Paper} 
+                        sx={{ 
+                            maxHeight: 'calc(100vh - 200px)',
+                            overflow: 'auto'
+                        }}
+                    >
+                        <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Product</TableCell>
                                     <TableCell align="right">Price</TableCell>
                                     <TableCell align="center">Quantity</TableCell>
                                     <TableCell align="right">Total</TableCell>
-                                    <TableCell align="center">Actions</TableCell>
+                                    <TableCell />
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -162,23 +198,22 @@ const Cart = () => {
                                                     style={{
                                                         width: 50,
                                                         height: 50,
+                                                        objectFit: 'contain',
                                                         marginRight: 16,
-                                                        objectFit: 'cover',
-                                                        borderRadius: 4,
                                                     }}
                                                 />
                                                 <Typography>{item.name}</Typography>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right">
-                                            ${item.price.toFixed(2)}
+                                            {currencySymbol}{getItemPrice(item.price)}
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleUpdateQuantity(item.product, item.quantity - 1)}
-                                                    disabled={item.quantity <= 1 || loading}
+                                                    disabled={item.quantity <= 1}
                                                 >
                                                     <RemoveIcon />
                                                 </IconButton>
@@ -188,20 +223,18 @@ const Cart = () => {
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleUpdateQuantity(item.product, item.quantity + 1)}
-                                                    disabled={loading}
                                                 >
                                                     <AddIcon />
                                                 </IconButton>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right">
-                                            ${(item.price * item.quantity).toFixed(2)}
+                                            {currencySymbol}{getItemTotal(item.price, item.quantity)}
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="right">
                                             <IconButton
                                                 color="error"
                                                 onClick={() => handleRemoveItem(item.product)}
-                                                disabled={loading}
                                             >
                                                 <DeleteIcon />
                                             </IconButton>
@@ -213,52 +246,62 @@ const Cart = () => {
                     </TableContainer>
                 </Grid>
 
+                {/* Checkout Section - Takes 4 columns on medium and larger screens */}
                 <Grid item xs={12} md={4}>
-                    <Paper sx={{ p: 3 }}>
+                    <Paper 
+                        elevation={3}
+                        sx={{
+                            p: 3,
+                            position: 'sticky',
+                            top: 24,
+                            bgcolor: 'background.paper'
+                        }}
+                    >
                         <Typography variant="h6" gutterBottom>
                             Order Summary
                         </Typography>
-                        <Box sx={{ mb: 2 }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography>Subtotal</Typography>
-                                <Typography>${calculateTotal().toFixed(2)}</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                <Typography>Shipping</Typography>
+                        <Box sx={{ mb: 3 }}>
+                            <Box sx={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between',
+                                mb: 2
+                            }}>
+                                <Typography color="text.secondary">
+                                    Subtotal
+                                </Typography>
                                 <Typography>
-                                    {calculateTotal() >= 50 ? 'Free' : '$5.00'}
+                                    {currencySymbol}{calculateTotal()}
                                 </Typography>
                             </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    mt: 2,
-                                    pt: 2,
-                                    borderTop: '1px solid',
-                                    borderColor: 'divider',
-                                }}
-                            >
-                                <Typography variant="h6">Total</Typography>
+                            <Box sx={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between',
+                                mb: 2,
+                                pt: 2,
+                                borderTop: 1,
+                                borderColor: 'divider'
+                            }}>
                                 <Typography variant="h6">
-                                    ${(calculateTotal() + (calculateTotal() >= 50 ? 0 : 5)).toFixed(2)}
+                                    Total
+                                </Typography>
+                                <Typography variant="h6" color="primary">
+                                    {currencySymbol}{calculateTotal()}
                                 </Typography>
                             </Box>
                         </Box>
                         <Button
                             variant="contained"
-                            fullWidth
+                            color="primary"
                             size="large"
-                            component={RouterLink}
-                            to="/checkout"
-                            disabled={loading}
+                            fullWidth
+                            startIcon={<ShoppingCartCheckoutIcon />}
                         >
                             Proceed to Checkout
                         </Button>
                     </Paper>
                 </Grid>
             </Grid>
-        </Box>
+        </Container>
     );
 };
 

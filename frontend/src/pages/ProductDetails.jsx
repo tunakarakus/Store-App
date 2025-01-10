@@ -25,12 +25,25 @@ import {
 } from '@mui/icons-material';
 import { fetchProducts } from '../features/productSlice';
 import { addToCart } from '../features/cartSlice';
+import { convertPrice } from '../features/currencySlice';
+
+const currencies = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    AUD: 'A$',
+    CAD: 'C$',
+    CHF: 'Fr',
+    CNY: '¥',
+};
 
 const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector((state) => state.products);
+    const { selectedCurrency, exchangeRates } = useSelector((state) => state.currency);
     const product = products.find(p => p._id === id);
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
 
@@ -52,6 +65,9 @@ const ProductDetails = () => {
     const handleBack = () => {
         navigate(-1);
     };
+
+    const currencySymbol = currencies[selectedCurrency] || '$';
+    const convertedPrice = product ? convertPrice(parseFloat(product.price), selectedCurrency, exchangeRates) : '0.00';
 
     if (loading) {
         return (
@@ -193,7 +209,7 @@ const ProductDetails = () => {
                             </Typography>
                             
                             <Typography variant="h5" color="primary" gutterBottom sx={{ mb: 3 }}>
-                                ${product.price.toFixed(2)}
+                                {currencySymbol}{convertedPrice}
                             </Typography>
 
                             <Divider sx={{ my: 3 }} />

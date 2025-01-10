@@ -10,6 +10,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { verifyToken } from './features/authSlice';
 import { fetchCart } from './features/cartSlice';
+import { fetchExchangeRates } from './features/currencySlice';
 
 // Import pages
 import Home from './pages/Home';
@@ -31,8 +32,21 @@ const AppContent = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        // Initial data fetching
         dispatch(verifyToken());
         dispatch(fetchCart());
+        
+        // Fetch exchange rates immediately
+        console.log('Initial exchange rates fetch...');
+        dispatch(fetchExchangeRates());
+
+        // Set up interval to fetch exchange rates every hour
+        const interval = setInterval(() => {
+            console.log('Fetching fresh exchange rates...');
+            dispatch(fetchExchangeRates());
+        }, 3600000); // 1 hour in milliseconds
+
+        return () => clearInterval(interval);
     }, [dispatch]);
 
     return (

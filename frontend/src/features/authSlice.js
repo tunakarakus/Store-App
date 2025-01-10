@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../services/api';
 import { clearCart, initializeUserCart } from './cartSlice';
+import axios from 'axios';
 
 // Helper function to safely parse JSON from localStorage
 const getStoredUser = () => {
@@ -55,20 +56,27 @@ export const register = createAsyncThunk(
 // Login user
 export const login = createAsyncThunk(
     'auth/login',
-    async (userData, { dispatch, rejectWithValue }) => {
+    async (credentials, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.post('/users/login', userData);
-            if (response.data && response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data));
-                // Initialize user's cart after successful login
-                await dispatch(initializeUserCart({ userId: response.data._id }));
-            }
-            return response.data;
+            const response = await axios.post('http://localhost:5001/api/users/login', credentials);
+            localStorage.setItem('token', response.data.token);
+            
+            // Immediately fetch user data after successful login
+            const userResponse = await axios.get('http://localhost:5001/api/users/profile', {
+                headers: {
+                    Authorization: `Bearer ${response.data.token}`
+                }
+            });
+            
+            // Initialize user's cart after successful login
+            await dispatch(initializeUserCart({ userId: userResponse.data._id }));
+            
+            return {
+                token: response.data.token,
+                user: userResponse.data
+            };
         } catch (error) {
-            return rejectWithValue(
-                error.response?.data?.message || 'Login failed. Please check your credentials.'
-            );
+            return rejectWithValue(error.response?.data?.message || 'Login failed');
         }
     }
 );
@@ -143,8 +151,9 @@ const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.isAuthenticated = true;
                 state.token = action.payload.token;
+                state.user = action.payload.user;
                 state.error = null;
             })
             .addCase(login.rejected, (state, action) => {

@@ -9,13 +9,26 @@ import {
     CardActionArea,
 } from '@mui/material';
 import { AddShoppingCart as AddShoppingCartIcon } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../features/cartSlice';
+import { convertPrice } from '../features/currencySlice';
+
+const currencies = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    AUD: 'A$',
+    CAD: 'C$',
+    CHF: 'Fr',
+    CNY: '¥',
+};
 
 const ProductCard = ({ product }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { selectedCurrency, exchangeRates } = useSelector((state) => state.currency);
 
     const handleAddToCart = (e) => {
         e.stopPropagation();
@@ -25,6 +38,10 @@ const ProductCard = ({ product }) => {
     const handleProductClick = () => {
         navigate(`/products/${product._id}`);
     };
+
+    // Simple price conversion
+    const convertedPrice = convertPrice(product.price, selectedCurrency, exchangeRates);
+    const currencySymbol = currencies[selectedCurrency];
 
     return (
         <Card 
@@ -52,7 +69,7 @@ const ProductCard = ({ product }) => {
                     </Typography>
                     <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography variant="h6" color="primary">
-                            ${product.price.toFixed(2)}
+                            {currencySymbol}{convertedPrice}
                         </Typography>
                         <IconButton 
                             color="primary" 

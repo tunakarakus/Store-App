@@ -1,5 +1,6 @@
-import React from 'react';
-import { Box, Container, Grid, Typography, Link, IconButton, Divider } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Container, Grid, Typography, Link, IconButton, Divider, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import {
     Facebook as FacebookIcon,
@@ -10,8 +11,33 @@ import {
     Phone as PhoneIcon,
     LocationOn as LocationIcon,
 } from '@mui/icons-material';
+import { setCurrency } from '../features/currencySlice';
+import { fetchExchangeRates } from '../features/currencySlice';
+
+const currencies = [
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+    { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc' },
+    { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
+];
 
 const Footer = () => {
+    const dispatch = useDispatch();
+    const { selectedCurrency, exchangeRates } = useSelector((state) => state.currency);
+
+    useEffect(() => {
+        // Fetch exchange rates when component mounts
+        dispatch(fetchExchangeRates());
+    }, [dispatch]);
+
+    const handleCurrencyChange = (event) => {
+        dispatch(setCurrency(event.target.value));
+    };
+
     return (
         <Box
             component="footer"
@@ -82,7 +108,7 @@ const Footer = () => {
                         </Link>
                     </Grid>
 
-                    {/* Contact Info */}
+                    {/* Contact Info and Currency Selector */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="h6" color="text.primary" gutterBottom>
                             Contact Us
@@ -99,12 +125,26 @@ const Footer = () => {
                                 +1 (555) 123-4567
                             </Typography>
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                             <EmailIcon sx={{ mr: 1, color: 'text.secondary' }} />
                             <Typography variant="body2" color="text.secondary">
                                 info@store.com
                             </Typography>
                         </Box>
+                        <FormControl fullWidth size="small">
+                            <InputLabel>Currency</InputLabel>
+                            <Select
+                                value={selectedCurrency}
+                                onChange={handleCurrencyChange}
+                                label="Currency"
+                            >
+                                {currencies.map((currency) => (
+                                    <MenuItem key={currency.code} value={currency.code}>
+                                        {currency.code} ({currency.symbol}) - {currency.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                 </Grid>
 
