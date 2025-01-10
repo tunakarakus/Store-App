@@ -11,8 +11,6 @@ import {
     Card,
     CardContent,
     Link,
-    FormControlLabel,
-    Checkbox,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { register } from '../features/authSlice';
@@ -27,9 +25,7 @@ const Register = () => {
         email: '',
         password: '',
         confirmPassword: '',
-        adminCode: '',
     });
-    const [showAdminField, setShowAdminField] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -51,10 +47,6 @@ const Register = () => {
             password: formData.password,
         };
 
-        if (showAdminField && formData.adminCode) {
-            userData.adminCode = formData.adminCode;
-        }
-
         const result = await dispatch(register(userData));
         if (!result.error) {
             navigate('/');
@@ -62,7 +54,7 @@ const Register = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: 8 }}>
+        <Container maxWidth="sm" sx={{ mt: 8, mb: 8 }}>
             <Card>
                 <CardContent>
                     <Typography variant="h4" component="h1" align="center" gutterBottom>
@@ -114,26 +106,6 @@ const Register = () => {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                         />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={showAdminField}
-                                    onChange={(e) => setShowAdminField(e.target.checked)}
-                                    color="primary"
-                                />
-                            }
-                            label="Register as Admin"
-                        />
-                        {showAdminField && (
-                            <TextField
-                                margin="normal"
-                                fullWidth
-                                label="Admin Code"
-                                name="adminCode"
-                                value={formData.adminCode}
-                                onChange={handleChange}
-                            />
-                        )}
                         <Button
                             type="submit"
                             fullWidth
