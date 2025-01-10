@@ -33,6 +33,13 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        credit: {
+            type: Number,
+            default: 0,
+            min: [0, 'Credit cannot be negative'],
+            get: v => parseFloat(v.toFixed(2)), // Round to 2 decimal places
+            set: v => parseFloat(v.toFixed(2)), // Round to 2 decimal places
+        },
     },
     {
         timestamps: true, // This enables createdAt and updatedAt fields

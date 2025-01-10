@@ -109,6 +109,7 @@ const updateUser = async (req, res) => {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
         user.role = req.body.role || user.role;
+        user.credit = req.body.credit !== undefined ? req.body.credit : user.credit;
         
         if (req.body.password) {
             user.password = req.body.password;
@@ -120,6 +121,7 @@ const updateUser = async (req, res) => {
             name: updatedUser.name,
             email: updatedUser.email,
             role: updatedUser.role,
+            credit: updatedUser.credit,
             createdAt: updatedUser.createdAt,
         });
     } catch (error) {

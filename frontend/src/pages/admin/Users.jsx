@@ -47,6 +47,7 @@ const Users = () => {
         name: '',
         email: '',
         role: 'user',
+        credit: 0,
     });
 
     useEffect(() => {
@@ -59,6 +60,7 @@ const Users = () => {
             name: user.name,
             email: user.email,
             role: user.role,
+            credit: user.credit || 0,
         });
         setOpen(true);
     };
@@ -70,13 +72,17 @@ const Users = () => {
             name: '',
             email: '',
             role: 'user',
+            credit: 0,
         });
     };
 
     const handleChange = (e) => {
+        const value = e.target.name === 'credit' 
+            ? parseFloat(e.target.value) 
+            : e.target.value;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [e.target.name]: value,
         });
     };
 
@@ -146,6 +152,7 @@ const Users = () => {
                                 <TableCell>Name</TableCell>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Role</TableCell>
+                                <TableCell>Credit</TableCell>
                                 <TableCell>Joined</TableCell>
                                 <TableCell align="right">Actions</TableCell>
                             </TableRow>
@@ -163,6 +170,14 @@ const Users = () => {
                                                     ? 'secondary'
                                                     : 'default'
                                             }
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={`$${user.credit?.toFixed(2) || '0.00'}`}
+                                            color="success"
+                                            variant="outlined"
                                             size="small"
                                         />
                                     </TableCell>
@@ -227,6 +242,22 @@ const Users = () => {
                                     <MenuItem value="admin">Admin</MenuItem>
                                 </Select>
                             </FormControl>
+                            <TextField
+                                fullWidth
+                                label="Credit"
+                                name="credit"
+                                type="number"
+                                value={formData.credit}
+                                onChange={handleChange}
+                                margin="normal"
+                                InputProps={{
+                                    startAdornment: '$',
+                                    inputProps: { 
+                                        min: 0,
+                                        step: 0.01
+                                    }
+                                }}
+                            />
                         </Box>
                     </DialogContent>
                     <DialogActions>

@@ -55,11 +55,13 @@ const Profile = () => {
                         <Typography variant="body1" color="text.secondary">
                             {user?.email}
                         </Typography>
-                        <Chip
-                            label={user?.role.toUpperCase()}
-                            color={user?.role === 'admin' ? 'secondary' : 'primary'}
-                            sx={{ mt: 1 }}
-                        />
+                        <Box sx={{ mt: 2, mb: 1 }}>
+                            <Chip
+                                label={`Credit: $${user?.credit?.toFixed(2) || '0.00'}`}
+                                color="success"
+                                variant="outlined"
+                            />
+                        </Box>
                     </Box>
 
                     <Divider sx={{ my: 3 }} />
