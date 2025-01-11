@@ -97,30 +97,35 @@ const ProductDetails = () => {
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
             <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton
-                        onClick={handleBack}
-                        sx={{ 
-                            mr: 2,
-                            color: 'text.primary',
-                            '&:hover': {
-                                bgcolor: 'rgba(0, 0, 0, 0.04)',
-                                color: 'text.primary'
-                            }
-                        }}
-                    >
-                        <ArrowBackIcon />
-                    </IconButton>
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link color="inherit" onClick={() => navigate('/products')} sx={{ cursor: 'pointer' }}>
-                            Products
-                        </Link>
-                        <Link color="inherit" onClick={() => navigate(`/products?category=${product.category}`)} sx={{ cursor: 'pointer' }}>
-                            {product.category}
-                        </Link>
-                        <Typography color="text.primary">{product.name}</Typography>
-                    </Breadcrumbs>
-                </Box>
+                <Container maxWidth="lg">
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <IconButton
+                            onClick={handleBack}
+                            sx={{ 
+                                mr: 2,
+                                color: 'text.primary',
+                                '&:hover': {
+                                    backgroundColor: 'transparent',
+                                    color: 'text.primary',
+                                }
+                            }}
+                        >
+                            <ArrowBackIcon />
+                        </IconButton>
+                        <Breadcrumbs separator="›" aria-label="breadcrumb">
+                            <Link color="inherit" onClick={() => navigate('/products')} sx={{ cursor: 'pointer' }}>
+                                Products
+                            </Link>
+                            <Link color="inherit" onClick={() => navigate(`/products?category=${product.category}`)} sx={{ cursor: 'pointer' }}>
+                                {product.category}
+                            </Link>
+                            <Link color="inherit" onClick={() => navigate(`/products?category=${product.category}&subcategory=${product.subcategory}`)} sx={{ cursor: 'pointer' }}>
+                                {product.subcategory}
+                            </Link>
+                            <Typography color="text.primary">{product.name}</Typography>
+                        </Breadcrumbs>
+                    </Box>
+                </Container>
             </Box>
 
             <Grid container spacing={4}>
@@ -176,13 +181,35 @@ const ProductDetails = () => {
                             <Chip
                                 icon={<InventoryIcon />}
                                 label={product.stock > 0 ? 'In Stock' : 'Out of Stock'}
-                                color={product.stock > 0 ? 'success' : 'error'}
-                                sx={{ mr: 1 }}
+                                color={product.stock > 0 ? 'default' : 'error'}
+                                sx={{ 
+                                    mr: 1,
+                                    bgcolor: product.stock > 0 ? 'rgba(0, 0, 0, 0.08)' : undefined,
+                                    color: product.stock > 0 ? 'text.primary' : undefined,
+                                    '& .MuiChip-icon': {
+                                        color: product.stock > 0 ? 'text.primary' : undefined
+                                    },
+                                    '&:hover': {
+                                        bgcolor: product.stock > 0 ? 'rgba(0, 0, 0, 0.08)' : undefined,
+                                        boxShadow: 'none'
+                                    }
+                                }}
                             />
                             <Chip
                                 icon={<LocalShippingIcon />}
                                 label="Free Shipping"
-                                color="primary"
+                                color="default"
+                                sx={{ 
+                                    bgcolor: 'rgba(0, 0, 0, 0.08)',
+                                    color: 'text.primary',
+                                    '& .MuiChip-icon': {
+                                        color: 'text.primary'
+                                    },
+                                    '&:hover': {
+                                        bgcolor: 'rgba(0, 0, 0, 0.08)',
+                                        boxShadow: 'none'
+                                    }
+                                }}
                             />
                         </Box>
                         

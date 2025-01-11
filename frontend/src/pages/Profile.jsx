@@ -67,31 +67,24 @@ const Profile = () => {
                             sx={{
                                 width: 100,
                                 height: 100,
-                                bgcolor: 'primary.main',
+                                bgcolor: 'text.primary',
                                 mb: 2,
                             }}
                         >
-                            <PersonIcon sx={{ fontSize: 60 }} />
+                            <PersonIcon sx={{ fontSize: 60, color: 'text.banner' }} />
                         </Avatar>
                         <Typography variant="h4" gutterBottom>
                             {user?.name}
                         </Typography>
-                        <Typography variant="body1" color="text.secondary">
+                        <Typography variant="body1" color="text.secondary" gutterBottom>
                             {user?.email}
                         </Typography>
-                        <Box sx={{ mt: 2, mb: 1 }}>
-                            <Chip
-                                label={`Credit: ${currencySymbol}${convertedCredit}`}
-                                color="success"
-                                variant="outlined"
-                            />
-                        </Box>
                     </Box>
 
                     <Divider sx={{ my: 3 }} />
 
                     <Grid container spacing={3}>
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={3}>
                             <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                                 Account Created
                             </Typography>
@@ -99,7 +92,7 @@ const Profile = () => {
                                 {formatDate(user?.createdAt)}
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={3}>
                             <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                                 Email Verified
                             </Typography>
@@ -107,12 +100,20 @@ const Profile = () => {
                                 {user?.emailVerified ? 'Yes' : 'No'}
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={3}>
                             <Typography variant="subtitle1" color="text.secondary" gutterBottom>
                                 Account Status
                             </Typography>
                             <Typography variant="body1">
                                 Active
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                                Credit Balance
+                            </Typography>
+                            <Typography variant="body1">
+                                {currencySymbol}{convertedCredit}
                             </Typography>
                         </Grid>
                     </Grid>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
@@ -15,9 +15,17 @@ import {
 import { login } from '../features/authSlice';
 
 const Login = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        // Clear any existing auth errors when component mounts or unmounts
+        return () => {
+            dispatch({ type: 'auth/clearError' });
+        };
+    }, [dispatch]);
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',

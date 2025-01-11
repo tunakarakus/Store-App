@@ -339,21 +339,6 @@ const Products = () => {
                                         : categories.main.find(c => c.id === currentCategory)?.title
                             }
                         </Typography>
-                        {currentCategory === 'main' && !viewParam && (
-                            <Typography 
-                                variant="h6" 
-                                sx={{ 
-                                    opacity: 0.9,
-                                    mt: 2,
-                                    maxWidth: '800px',
-                                    mx: 'auto',
-                                    fontWeight: 400,
-                                    lineHeight: 1.6,
-                                }}
-                            >
-                                Browse our selection of high-quality networking products
-                            </Typography>
-                        )}
                     </Container>
                 </Box>
                 {(currentCategory !== 'main' || viewParam === 'all') && (

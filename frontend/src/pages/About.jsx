@@ -68,7 +68,21 @@ const About = () => {
             </Box>
 
             <Container maxWidth="lg">
-                {/* Who We Are Section */}
+                {/* Corporate Background Image */}
+                <Box
+                    component="img"
+                    src="https://www.bcfiber.com/images/kurumsalbg.png"
+                    alt="Corporate Background"
+                    sx={{
+                        width: '100%',
+                        height: 'auto',
+                        mb: 6,
+                        borderRadius: 2,
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)'
+                    }}
+                />
+
+                {/* Who Are We Section */}
                 <Box sx={{ mb: 6 }}>
                     <Typography variant="h4" gutterBottom>
                         Who Are We?

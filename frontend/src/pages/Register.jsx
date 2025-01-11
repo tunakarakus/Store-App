@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -19,6 +19,13 @@ const Register = () => {
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.auth);
 
+    useEffect(() => {
+        // Clear any existing auth errors when component mounts or unmounts
+        return () => {
+            dispatch({ type: 'auth/clearError' });
+        };
+    }, [dispatch]);
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -36,7 +43,18 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            alert('Passwords do not match');
+            dispatch({ type: 'auth/register/rejected', payload: 'Passwords do not match' });
+            return;
+        }
+
+        if (formData.password.length < 6) {
+            dispatch({ type: 'auth/register/rejected', payload: 'Password must be at least 6 characters long' });
+            return;
+        }
+
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!emailRegex.test(formData.email)) {
+            dispatch({ type: 'auth/register/rejected', payload: 'Please provide a valid email address' });
             return;
         }
 

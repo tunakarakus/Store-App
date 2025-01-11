@@ -280,7 +280,7 @@ const Contact = () => {
                             <>
                                 <Box sx={{ mb: 4 }}>
                                     <Typography variant="h4" gutterBottom>
-                                        {selectedOffice.flag} {selectedOffice.city}, {selectedCountry}
+                                        {selectedOffice.city}, {selectedCountry}
                                     </Typography>
                                     {selectedOffice.company && (
                                         <Typography variant="h6" gutterBottom>
@@ -331,13 +331,14 @@ const Contact = () => {
                     <Grid item xs={12} md={6}>
                         <Box sx={{ 
                             p: 3, 
-                            bgcolor: 'rgba(196, 30, 58, 0.03)', 
+                            bgcolor: 'rgba(0, 0, 0, 0.02)', 
                             borderRadius: 2,
-                            border: '1px solid rgba(196, 30, 58, 0.1)'
+                            border: '1px solid rgba(0, 0, 0, 0.08)',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)'
                         }}>
                             <Box sx={{ mb: 4 }}>
                                 <Typography variant="h4" gutterBottom>
-                                    🇹🇷 Istanbul, TURKEY
+                                    Istanbul, TURKEY
                                 </Typography>
                                 <Typography variant="h5" gutterBottom sx={{ color: '#c41e3a' }}>
                                     HEAD OFFICE
@@ -386,7 +387,7 @@ const Contact = () => {
                                     <Grid item>
                                         <Link 
                                             href="#" 
-                                            sx={{ 
+                                        sx={{
                                                 color: 'text.primary',
                                                 '&:hover': {
                                                     color: 'text.primary'
@@ -399,7 +400,7 @@ const Contact = () => {
                                     <Grid item>
                                         <Link 
                                             href="#" 
-                                            sx={{ 
+                                            sx={{
                                                 color: 'text.primary',
                                                 '&:hover': {
                                                     color: 'text.primary'
@@ -434,7 +435,7 @@ const Contact = () => {
                                         >
                                             <YouTubeIcon />
                                         </Link>
-                                    </Grid>
+                                </Grid>
                                     <Grid item>
                                         <Link 
                                             href="#" 
