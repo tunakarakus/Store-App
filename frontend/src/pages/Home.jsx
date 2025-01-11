@@ -252,24 +252,22 @@ const Home = () => {
                                 component={RouterLink}
                                 to="/about"
                                 variant="outlined"
-                                color="primary"
-                                size="medium"
+                                disableRipple
                                 sx={{ 
-                                    mt: 2,
                                     px: 3,
                                     py: 1,
                                     borderRadius: 2,
-                                    borderWidth: '1px',
-                                    textTransform: 'none',
                                     fontSize: '1rem',
                                     fontWeight: 500,
-                                    color: 'text.primary',
+                                    borderWidth: '1px',
                                     borderColor: 'rgba(0, 0, 0, 0.23)',
+                                    color: 'text.primary',
                                     backgroundColor: 'transparent',
                                     '&:hover': {
-                                        borderColor: 'rgba(0, 0, 0, 0.87)',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                                        color: 'text.primary'
+                                        backgroundColor: 'transparent',
+                                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                                        boxShadow: 'none',
+                                        transform: 'none'
                                     }
                                 }}
                             >

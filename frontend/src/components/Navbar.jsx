@@ -133,9 +133,6 @@ const Navbar = () => {
                             mr: 4,
                             textDecoration: 'none',
                             color: 'text.primary',
-                            '&:hover': {
-                                color: 'text.primary',
-                            }
                         }}
                     >
                         BC FIBER
@@ -159,12 +156,14 @@ const Navbar = () => {
                                     <Button
                                         component={RouterLink}
                                         to="/products"
+                                        disableRipple
                                         sx={{ 
                                             color: 'text.primary',
+                                            boxShadow: 'none',
                                             '&:hover': {
                                                 backgroundColor: 'transparent',
-                                                color: 'text.primary',
-                                                textDecoration: 'none'
+                                                boxShadow: 'none',
+                                                transform: 'none'
                                             }
                                         }}
                                     >
@@ -186,12 +185,14 @@ const Navbar = () => {
                             <Button
                                 component={RouterLink}
                                 to="/about"
+                                disableRipple
                                 sx={{ 
                                     color: 'text.primary',
+                                    boxShadow: 'none',
                                     '&:hover': {
                                         backgroundColor: 'transparent',
-                                        color: 'text.primary',
-                                        textDecoration: 'none'
+                                        boxShadow: 'none',
+                                        transform: 'none'
                                     }
                                 }}
                             >
@@ -200,12 +201,14 @@ const Navbar = () => {
                             <Button
                                 component={RouterLink}
                                 to="/contact"
+                                disableRipple
                                 sx={{ 
                                     color: 'text.primary',
+                                    boxShadow: 'none',
                                     '&:hover': {
                                         backgroundColor: 'transparent',
-                                        color: 'text.primary',
-                                        textDecoration: 'none'
+                                        boxShadow: 'none',
+                                        transform: 'none'
                                     }
                                 }}
                             >

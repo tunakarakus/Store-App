@@ -180,9 +180,17 @@ const Products = () => {
                 </Link>
             );
             items.push(
-                <Typography key="category" color="text.primary">
+                <Link
+                    key="category"
+                    color="inherit"
+                    onClick={() => {
+                        navigate(`/products?category=${encodeURIComponent(currentCategory)}`);
+                        setCurrentSubcategory(null);
+                    }}
+                    sx={{ cursor: 'pointer' }}
+                >
                     {categories.main.find(c => c.id === currentCategory)?.title}
-                </Typography>
+                </Link>
             );
             if (currentSubcategory) {
                 items.push(
@@ -357,7 +365,8 @@ const Products = () => {
                                     mr: 2,
                                     color: 'text.primary',
                                     '&:hover': {
-                                        bgcolor: 'rgba(0, 0, 0, 0.04)',
+                                        backgroundColor: 'transparent',
+                                        color: 'text.primary',
                                     }
                                 }}
                             >

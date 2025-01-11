@@ -150,7 +150,8 @@ const Register = () => {
                                         color: 'primary.main',
                                         textDecoration: 'none',
                                         '&:hover': {
-                                            textDecoration: 'underline',
+                                            color: 'primary.main',
+                                            textDecoration: 'underline'
                                         },
                                     }}
                                 >
