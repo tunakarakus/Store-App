@@ -14,9 +14,10 @@ const CategoryCard = ({ title, icon: Icon, onClick }) => {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'transform 0.2s',
+                transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                     transform: 'translateY(-4px)',
+                    boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.12)',
                 }
             }}
         >
@@ -31,7 +32,7 @@ const CategoryCard = ({ title, icon: Icon, onClick }) => {
                 }}
             >
                 <Box sx={{ p: 2 }}>
-                    {Icon && <Icon sx={{ fontSize: 60, color: 'primary.main' }} />}
+                    {Icon && <Icon sx={{ fontSize: 60, color: 'text.primary' }} />}
                 </Box>
                 <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant="h6" component="div">

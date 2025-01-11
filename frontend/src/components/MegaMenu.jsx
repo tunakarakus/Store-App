@@ -103,7 +103,7 @@ const MegaMenu = ({ onClose }) => {
                                 }
                             }}
                         >
-                            <Icon sx={{ mr: 1, fontSize: 20 }} />
+                            <Icon sx={{ mr: 1, fontSize: 20, color: 'text.primary' }} />
                             <Typography variant="subtitle1" component="div" sx={{ fontWeight: 500 }}>
                                 {category}
                             </Typography>

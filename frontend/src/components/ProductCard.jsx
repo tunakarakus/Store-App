@@ -55,9 +55,10 @@ const ProductCard = ({ product }) => {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'transform 0.2s',
+                transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                     transform: 'translateY(-4px)',
+                    boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.12)',
                 }
             }}
         >
@@ -89,20 +90,21 @@ const ProductCard = ({ product }) => {
                             )}
                             <Typography 
                                 variant="h6" 
-                                color={hasCustomPrice ? "error" : "primary"}
+                                color={hasCustomPrice ? "error" : "text.primary"}
+                                sx={{ fontWeight: 600 }}
                             >
                                 {currencySymbol}{convertedCustomPrice}
                             </Typography>
                         </Box>
                         <IconButton 
-                            color="primary" 
-                            onClick={handleAddToCart}
                             sx={{ 
+                                color: 'text.primary',
                                 '&:hover': {
-                                    backgroundColor: 'primary.main',
-                                    color: 'white',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                    color: 'text.primary',
                                 }
                             }}
+                            onClick={handleAddToCart}
                         >
                             <AddShoppingCartIcon />
                         </IconButton>

@@ -100,8 +100,17 @@ const Cart = () => {
         };
     }, []);
 
-    const handleRemoveItem = (productId) => {
-        dispatch(removeFromCart(productId));
+    const handleRemoveItem = async (productId) => {
+        // Optimistically update UI first
+        const updatedItems = items.filter(item => item.product !== productId);
+        dispatch(updateQuantityLocally({ items: updatedItems }));
+        
+        try {
+            await dispatch(removeFromCart(productId)).unwrap();
+        } catch (error) {
+            // If the delete fails, refresh the cart to get the correct state
+            dispatch(fetchCart());
+        }
     };
 
     // Function to safely convert and display item price
@@ -247,6 +256,13 @@ const Cart = () => {
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleUpdateQuantity(item.product, item.quantity - 1)}
+                                                    sx={{ 
+                                                        color: 'text.primary',
+                                                        '&:hover': {
+                                                            backgroundColor: 'transparent',
+                                                            color: 'text.primary'
+                                                        }
+                                                    }}
                                                     disabled={item.quantity <= 1}
                                                 >
                                                     <RemoveIcon />
@@ -283,6 +299,13 @@ const Cart = () => {
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleUpdateQuantity(item.product, item.quantity + 1)}
+                                                    sx={{ 
+                                                        color: 'text.primary',
+                                                        '&:hover': {
+                                                            backgroundColor: 'transparent',
+                                                            color: 'text.primary'
+                                                        }
+                                                    }}
                                                 >
                                                     <AddIcon />
                                                 </IconButton>
@@ -302,8 +325,14 @@ const Cart = () => {
                                         </TableCell>
                                         <TableCell align="right">
                                             <IconButton
-                                                color="error"
                                                 onClick={() => handleRemoveItem(item.product)}
+                                                sx={{ 
+                                                    color: 'text.primary',
+                                                    '&:hover': {
+                                                        backgroundColor: 'transparent',
+                                                        color: 'text.primary'
+                                                    }
+                                                }}
                                             >
                                                 <DeleteIcon />
                                             </IconButton>
@@ -353,7 +382,7 @@ const Cart = () => {
                                 <Typography variant="h6">
                                     Total
                                 </Typography>
-                                <Typography variant="h6" color="primary">
+                                <Typography variant="h6" color="text.primary" sx={{ fontWeight: 600 }}>
                                     {currencySymbol}{calculateTotal()}
                                 </Typography>
                             </Box>
@@ -363,7 +392,7 @@ const Cart = () => {
                             color="primary"
                             size="large"
                             fullWidth
-                            startIcon={<ShoppingCartCheckoutIcon />}
+                            startIcon={<ShoppingCartCheckoutIcon sx={{ color: 'text.banner' }} />}
                         >
                             Proceed to Checkout
                         </Button>

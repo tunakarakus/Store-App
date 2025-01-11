@@ -219,15 +219,21 @@ const cartSlice = createSlice({
         error: null,
     },
     reducers: {
+        updateQuantityLocally: (state, action) => {
+            if (action.payload.items) {
+                // Handle optimistic delete
+                state.items = action.payload.items;
+            } else {
+                // Handle quantity update
+                const { productId, quantity } = action.payload;
+                const item = state.items.find(item => item.product === productId);
+                if (item) {
+                    item.quantity = quantity;
+                }
+            }
+        },
         clearError: (state) => {
             state.error = null;
-        },
-        updateQuantityLocally: (state, action) => {
-            const { productId, quantity } = action.payload;
-            const item = state.items.find(item => item.product === productId);
-            if (item) {
-                item.quantity = quantity;
-            }
         },
     },
     extraReducers: (builder) => {

@@ -294,9 +294,9 @@ const Products = () => {
             <>
                 <Box 
                     sx={{ 
-                        bgcolor: '#2A3942',
-                        color: 'white',
-                        py: 6,
+                        bgcolor: 'background.banner',
+                        color: 'text.banner',
+                        py: 8,
                         mb: 4,
                         textAlign: 'center',
                         width: '100vw',
@@ -305,10 +305,23 @@ const Products = () => {
                         marginRight: 'calc(-50vw + 50%)',
                         left: 0,
                         right: 0,
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                        backgroundImage: 'linear-gradient(to right, #7F0000, #B71C1C, #7F0000)',
                     }}
                 >
                     <Container maxWidth="lg">
-                        <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 0 }}>
+                        <Typography 
+                            variant="h3" 
+                            component="h1" 
+                            gutterBottom 
+                            sx={{ 
+                                mb: 2,
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+                            }}
+                        >
                             {viewParam === 'all'
                                 ? 'All Products'
                                 : currentSubcategory 
@@ -319,7 +332,17 @@ const Products = () => {
                             }
                         </Typography>
                         {currentCategory === 'main' && !viewParam && (
-                            <Typography variant="h6" color="inherit" sx={{ opacity: 0.8, mt: 2 }}>
+                            <Typography 
+                                variant="h6" 
+                                sx={{ 
+                                    opacity: 0.9,
+                                    mt: 2,
+                                    maxWidth: '800px',
+                                    mx: 'auto',
+                                    fontWeight: 400,
+                                    lineHeight: 1.6,
+                                }}
+                            >
                                 Browse our selection of high-quality networking products
                             </Typography>
                         )}

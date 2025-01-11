@@ -61,16 +61,56 @@ const Footer = () => {
                             Quality products and expert support for all your networking needs.
                         </Typography>
                         <Box sx={{ mt: 2 }}>
-                            <IconButton color="primary" aria-label="facebook">
+                            <IconButton 
+                                color="inherit" 
+                                aria-label="facebook" 
+                                sx={{ 
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        backgroundColor: 'transparent',
+                                        color: 'text.primary'
+                                    }
+                                }}
+                            >
                                 <FacebookIcon />
                             </IconButton>
-                            <IconButton color="primary" aria-label="twitter">
+                            <IconButton 
+                                color="inherit" 
+                                aria-label="twitter" 
+                                sx={{ 
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        backgroundColor: 'transparent',
+                                        color: 'text.primary'
+                                    }
+                                }}
+                            >
                                 <TwitterIcon />
                             </IconButton>
-                            <IconButton color="primary" aria-label="instagram">
+                            <IconButton 
+                                color="inherit" 
+                                aria-label="instagram" 
+                                sx={{ 
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        backgroundColor: 'transparent',
+                                        color: 'text.primary'
+                                    }
+                                }}
+                            >
                                 <InstagramIcon />
                             </IconButton>
-                            <IconButton color="primary" aria-label="linkedin">
+                            <IconButton 
+                                color="inherit" 
+                                aria-label="linkedin" 
+                                sx={{ 
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        backgroundColor: 'transparent',
+                                        color: 'text.primary'
+                                    }
+                                }}
+                            >
                                 <LinkedInIcon />
                             </IconButton>
                         </Box>
@@ -159,11 +199,43 @@ const Footer = () => {
                             </button>
                         </Box>
                         <FormControl fullWidth size="small">
-                            <InputLabel>Currency</InputLabel>
+                            <InputLabel sx={{ color: 'text.secondary', '&.Mui-focused': { color: 'text.secondary' } }}>Currency</InputLabel>
                             <Select
                                 value={selectedCurrency}
                                 onChange={handleCurrencyChange}
                                 label="Currency"
+                                sx={{
+                                    color: 'text.primary',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                                    },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'rgba(0, 0, 0, 0.87)',
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'rgba(0, 0, 0, 0.87)',
+                                    },
+                                    '& .MuiSvgIcon-root': {
+                                        color: 'rgba(0, 0, 0, 0.54)',
+                                    },
+                                    '&.Mui-focused': {
+                                        color: 'text.primary',
+                                    }
+                                }}
+                                MenuProps={{
+                                    sx: {
+                                        '& .MuiMenuItem-root': {
+                                            color: 'text.primary',
+                                            '&.Mui-selected': {
+                                                color: 'text.primary',
+                                                backgroundColor: 'action.hover',
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: 'action.hover',
+                                            },
+                                        }
+                                    }
+                                }}
                             >
                                 {currencies.map((currency) => (
                                     <MenuItem key={currency.code} value={currency.code}>

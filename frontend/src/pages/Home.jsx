@@ -112,6 +112,10 @@ const Home = () => {
                                     px: 4,
                                     py: 1,
                                     borderRadius: 2,
+                                    color: 'text.banner',
+                                    '&:hover': {
+                                        color: 'text.banner'
+                                    }
                                 }}
                             >
                                 Browse Products
@@ -157,7 +161,7 @@ const Home = () => {
                                     <Icon
                                         sx={{
                                             fontSize: 48,
-                                            color: 'primary.main',
+                                            color: 'text.primary',
                                             mb: 2,
                                         }}
                                     />
@@ -205,14 +209,16 @@ const Home = () => {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         textDecoration: 'none',
+                                        transition: 'all 0.2s ease-in-out',
                                         '&:hover': {
-                                            boxShadow: 6,
+                                            boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.12)',
+                                            transform: 'translateY(-2px)',
                                         },
                                     }}
                                 >
                                     <CardContent sx={{ flexGrow: 1, p: 3 }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                            <category.icon sx={{ mr: 2, color: 'primary.main', fontSize: 40 }} />
+                                            <category.icon sx={{ mr: 2, color: 'text.primary', fontSize: 40 }} />
                                             <Typography variant="h6" component="h3">
                                                 {category.title}
                                             </Typography>
@@ -247,7 +253,25 @@ const Home = () => {
                                 to="/about"
                                 variant="outlined"
                                 color="primary"
-                                size="large"
+                                size="medium"
+                                sx={{ 
+                                    mt: 2,
+                                    px: 3,
+                                    py: 1,
+                                    borderRadius: 2,
+                                    borderWidth: '1px',
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    color: 'text.primary',
+                                    borderColor: 'rgba(0, 0, 0, 0.23)',
+                                    backgroundColor: 'transparent',
+                                    '&:hover': {
+                                        borderColor: 'rgba(0, 0, 0, 0.87)',
+                                        backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                                        color: 'text.primary'
+                                    }
+                                }}
                             >
                                 Learn More About Us
                             </Button>

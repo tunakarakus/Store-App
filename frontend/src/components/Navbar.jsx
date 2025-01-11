@@ -164,6 +164,7 @@ const Navbar = () => {
                                             '&:hover': {
                                                 backgroundColor: 'transparent',
                                                 color: 'text.primary',
+                                                textDecoration: 'none'
                                             }
                                         }}
                                     >
@@ -190,6 +191,7 @@ const Navbar = () => {
                                     '&:hover': {
                                         backgroundColor: 'transparent',
                                         color: 'text.primary',
+                                        textDecoration: 'none'
                                     }
                                 }}
                             >
@@ -203,6 +205,7 @@ const Navbar = () => {
                                     '&:hover': {
                                         backgroundColor: 'transparent',
                                         color: 'text.primary',
+                                        textDecoration: 'none'
                                     }
                                 }}
                             >
@@ -313,10 +316,16 @@ const Navbar = () => {
                     {isMobile && (
                         <IconButton
                             edge="end"
-                            color="inherit"
                             aria-label="menu"
                             onClick={handleMobileMenuToggle}
-                            sx={{ ml: 2 }}
+                            sx={{ 
+                                ml: 2,
+                                color: 'text.primary',
+                                '&:hover': {
+                                    backgroundColor: 'transparent',
+                                    color: 'text.primary',
+                                }
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>

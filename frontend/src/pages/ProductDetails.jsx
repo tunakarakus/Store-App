@@ -105,6 +105,7 @@ const ProductDetails = () => {
                             color: 'text.primary',
                             '&:hover': {
                                 bgcolor: 'rgba(0, 0, 0, 0.04)',
+                                color: 'text.primary'
                             }
                         }}
                     >
@@ -158,7 +159,8 @@ const ProductDetails = () => {
                             )}
                             <Typography 
                                 variant="h4" 
-                                color={product.standardPrice && product.standardPrice !== product.price ? "error" : "primary"}
+                                color={product.standardPrice && product.standardPrice !== product.price ? "error" : "text.primary"}
+                                sx={{ fontWeight: 600 }}
                             >
                                 {currencySymbol}{convertedPrice}
                             </Typography>
@@ -187,7 +189,7 @@ const ProductDetails = () => {
                         <Button
                             variant="contained"
                             size="large"
-                            startIcon={<ShoppingCartIcon />}
+                            startIcon={<ShoppingCartIcon sx={{ color: 'text.banner' }} />}
                             onClick={handleAddToCart}
                             fullWidth
                             disabled={product.stock <= 0}

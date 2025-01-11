@@ -196,9 +196,9 @@ const Contact = () => {
             {/* Hero Section */}
             <Box
                 sx={{
-                    bgcolor: '#2A3942',
-                    color: 'white',
-                    py: 6,
+                    bgcolor: 'background.banner',
+                    color: 'text.banner',
+                    py: 8,
                     mb: 4,
                     textAlign: 'center',
                     width: '100vw',
@@ -207,6 +207,8 @@ const Contact = () => {
                     marginRight: 'calc(-50vw + 50%)',
                     left: 0,
                     right: 0,
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                    backgroundImage: 'linear-gradient(to right, #7F0000, #B71C1C, #7F0000)',
                 }}
             >
                 <Container maxWidth="lg">
@@ -215,6 +217,13 @@ const Contact = () => {
                         component="h1"
                         gutterBottom
                         align="center"
+                        sx={{ 
+                            mb: 2,
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+                        }}
                     >
                         Contact Us
                     </Typography>
@@ -375,27 +384,67 @@ const Contact = () => {
                             <Box sx={{ mt: 4 }}>
                                 <Grid container spacing={2}>
                                     <Grid item>
-                                        <Link href="#" color="inherit">
+                                        <Link 
+                                            href="#" 
+                                            sx={{ 
+                                                color: 'text.primary',
+                                                '&:hover': {
+                                                    color: 'text.primary'
+                                                }
+                                            }}
+                                        >
                                             <FacebookIcon />
                                         </Link>
                                     </Grid>
                                     <Grid item>
-                                        <Link href="#" color="inherit">
+                                        <Link 
+                                            href="#" 
+                                            sx={{ 
+                                                color: 'text.primary',
+                                                '&:hover': {
+                                                    color: 'text.primary'
+                                                }
+                                            }}
+                                        >
                                             <TwitterIcon />
                                         </Link>
                                     </Grid>
                                     <Grid item>
-                                        <Link href="#" color="inherit">
+                                        <Link 
+                                            href="#" 
+                                            sx={{ 
+                                                color: 'text.primary',
+                                                '&:hover': {
+                                                    color: 'text.primary'
+                                                }
+                                            }}
+                                        >
                                             <LinkedInIcon />
                                         </Link>
                                     </Grid>
                                     <Grid item>
-                                        <Link href="#" color="inherit">
+                                        <Link 
+                                            href="#" 
+                                            sx={{ 
+                                                color: 'text.primary',
+                                                '&:hover': {
+                                                    color: 'text.primary'
+                                                }
+                                            }}
+                                        >
                                             <YouTubeIcon />
                                         </Link>
                                     </Grid>
                                     <Grid item>
-                                        <Link href="#" color="inherit">
+                                        <Link 
+                                            href="#" 
+                                            sx={{ 
+                                                color: 'text.primary',
+                                                '&:hover': {
+                                                    color: 'text.primary'
+                                                }
+                                            }}
+                                        >
                                             <InstagramIcon />
                                         </Link>
                                     </Grid>
