@@ -8,10 +8,11 @@ const {
     deleteProduct,
 } = require('../controllers/productController');
 const { auth, isAdmin } = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/optionalAuth');
 
-// Routes that need user identification for custom prices
-router.get('/', auth, getProducts);
-router.get('/:id', auth, getProduct);
+// Public routes with optional auth for custom prices
+router.get('/', optionalAuth, getProducts);
+router.get('/:id', optionalAuth, getProduct);
 
 // Protected routes (admin only)
 router.post('/', auth, isAdmin, createProduct);
