@@ -9,12 +9,15 @@ const productApi = axios.create({
     },
 });
 
-// Add auth token to requests
+// Add auth token to requests only for protected routes
 productApi.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Only add token for admin operations (create, update, delete)
+        if (config.method !== 'get') {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -28,9 +31,13 @@ export const fetchProducts = createAsyncThunk(
     'products/fetchAll',
     async (_, { rejectWithValue }) => {
         try {
+            console.log('Fetching products...');
             const response = await productApi.get('/');
+            console.log('Products response:', response.data);
             return response.data;
         } catch (error) {
+            console.error('Error fetching products:', error);
+            console.error('Error response:', error.response);
             return rejectWithValue(
                 error.response?.data?.message || 'Failed to fetch products'
             );
@@ -107,15 +114,18 @@ const productSlice = createSlice({
             .addCase(fetchProducts.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                console.log('Fetching products - pending');
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
                 state.products = action.payload;
                 state.error = null;
+                console.log('Fetching products - fulfilled:', action.payload);
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                console.log('Fetching products - rejected:', action.payload);
             })
             // Create product
             .addCase(createProduct.pending, (state) => {

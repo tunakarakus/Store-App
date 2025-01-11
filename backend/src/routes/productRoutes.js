@@ -10,8 +10,8 @@ const {
 const { auth, isAdmin } = require('../middleware/auth');
 
 // Public routes with optional auth for custom prices
-router.get('/', auth, getProducts);
-router.get('/:id', auth, getProduct);
+router.get('/', getProducts);
+router.get('/:id', getProduct);
 
 // Protected routes (admin only)
 router.post('/', auth, isAdmin, createProduct);

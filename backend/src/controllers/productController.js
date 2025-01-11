@@ -31,8 +31,10 @@ const getProducts = async (req, res) => {
             return res.json(productsWithCustomPrices);
         }
         
-        res.json(products);
+        // For unauthenticated users, just return the products
+        res.json(products.map(product => product.toObject()));
     } catch (error) {
+        console.error('Error in getProducts:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -61,8 +63,10 @@ const getProduct = async (req, res) => {
             }
         }
 
-        res.json(product);
+        // For unauthenticated users, just return the product
+        res.json(product.toObject());
     } catch (error) {
+        console.error('Error in getProduct:', error);
         res.status(500).json({ message: error.message });
     }
 };
