@@ -107,7 +107,7 @@ const Dashboard = () => {
 
             {/* Quick Stats */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper
                         sx={{
                             p: 3,
@@ -121,7 +121,7 @@ const Dashboard = () => {
                         <Typography color="text.secondary">Total Users</Typography>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper
                         sx={{
                             p: 3,
@@ -135,7 +135,21 @@ const Dashboard = () => {
                         <Typography color="text.secondary">Products</Typography>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper
+                        sx={{
+                            p: 3,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <MoneyIcon sx={{ fontSize: 40, mb: 1, color: 'text.primary' }} />
+                        <Typography variant="h4" color="text.primary">5</Typography>
+                        <Typography color="text.secondary">Total Earnings</Typography>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper
                         sx={{
                             p: 3,
@@ -150,6 +164,7 @@ const Dashboard = () => {
                     </Paper>
                 </Grid>
             </Grid>
+
 
             {/* Admin Actions */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
