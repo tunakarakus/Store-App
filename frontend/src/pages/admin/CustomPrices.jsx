@@ -10,17 +10,14 @@ import {
     TableHead,
     TableRow,
     Button,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
     TextField,
     MenuItem,
     IconButton,
     Alert,
-    Container
+    Container,
+    Tooltip
 } from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { ArrowBack as ArrowBackIcon, Save as SaveIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../features/productSlice';
 import { fetchUsers } from '../../features/userSlice';
@@ -32,64 +29,66 @@ const CustomPrices = () => {
     const dispatch = useDispatch();
     const products = useSelector(state => state.products.products);
     const users = useSelector(state => state.users.users);
-    const [customPrices, setCustomPrices] = useState([]);
-    const [open, setOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState('');
-    const [selectedProduct, setSelectedProduct] = useState('');
-    const [customPrice, setCustomPrice] = useState('');
+    const [customPrices, setCustomPrices] = useState({});
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [hasChanges, setHasChanges] = useState(false);
 
     useEffect(() => {
         dispatch(fetchProducts());
         dispatch(fetchUsers());
-        fetchCustomPrices();
     }, [dispatch]);
 
-    const fetchCustomPrices = async () => {
+    useEffect(() => {
+        if (selectedUser) {
+            fetchUserCustomPrices();
+        }
+    }, [selectedUser]);
+
+    const fetchUserCustomPrices = async () => {
         try {
-            const response = await api.get('/custom-prices/all');
-            setCustomPrices(response.data);
+            const response = await api.get(`/custom-prices/user/${selectedUser}`);
+            const priceMap = {};
+            response.data.forEach(cp => {
+                priceMap[cp.product._id] = cp.price;
+            });
+            setCustomPrices(priceMap);
+            setHasChanges(false);
         } catch (error) {
             setError('Failed to fetch custom prices');
         }
     };
 
-    const handleOpen = () => {
-        setOpen(true);
-        setError(null);
-        setSuccess(null);
-        setSelectedUser('');
-        setSelectedProduct('');
-        setCustomPrice('');
+    const handlePriceChange = (productId, value) => {
+        setCustomPrices(prev => ({
+            ...prev,
+            [productId]: value === '' ? '' : parseFloat(value)
+        }));
+        setHasChanges(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleSubmit = async () => {
+    const handleSave = async () => {
         try {
-            await api.post('/custom-prices', {
+            const updates = Object.entries(customPrices).map(([productId, price]) => ({
                 userId: selectedUser,
-                productId: selectedProduct,
-                price: parseFloat(customPrice)
-            });
-            fetchCustomPrices();
-            setSuccess('Custom price set successfully');
-            handleClose();
-        } catch (error) {
-            setError(error.response?.data?.message || 'Failed to set custom price');
-        }
-    };
+                productId,
+                price: price || null // null will remove the custom price
+            }));
 
-    const handleDelete = async (userId, productId) => {
-        try {
-            await api.delete(`/custom-prices/${userId}/${productId}`);
-            fetchCustomPrices();
-            setSuccess('Custom price deleted successfully');
+            await Promise.all(
+                updates.map(update => 
+                    update.price === null
+                        ? api.delete(`/custom-prices/${update.userId}/${update.productId}`)
+                        : api.post('/custom-prices', update)
+                )
+            );
+
+            setSuccess('Custom prices updated successfully');
+            setHasChanges(false);
+            fetchUserCustomPrices();
         } catch (error) {
-            setError('Failed to delete custom price');
+            setError(error.response?.data?.message || 'Failed to update custom prices');
         }
     };
 
@@ -107,14 +106,6 @@ const CustomPrices = () => {
                     <Typography variant="h4" component="h1">
                         Custom Prices
                     </Typography>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={handleOpen}
-                    >
-                        Add Custom Price
-                    </Button>
                 </Box>
 
                 {error && (
@@ -128,90 +119,75 @@ const CustomPrices = () => {
                     </Alert>
                 )}
 
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>User</TableCell>
-                                <TableCell>Product</TableCell>
-                                <TableCell>Standard Price</TableCell>
-                                <TableCell>Custom Price</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {customPrices.map((cp) => (
-                                <TableRow key={`${cp.user._id}-${cp.product._id}`}>
-                                    <TableCell>{cp.user.email}</TableCell>
-                                    <TableCell>{cp.product.name}</TableCell>
-                                    <TableCell>${cp.product.price.toFixed(2)}</TableCell>
-                                    <TableCell>${cp.price.toFixed(2)}</TableCell>
-                                    <TableCell>
-                                        <IconButton
-                                            color="error"
-                                            onClick={() => handleDelete(cp.user._id, cp.product._id)}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+                <TextField
+                    select
+                    fullWidth
+                    label="Select User"
+                    value={selectedUser}
+                    onChange={(e) => setSelectedUser(e.target.value)}
+                    sx={{ mb: 3 }}
+                >
+                    {users.map((user) => (
+                        <MenuItem key={user._id} value={user._id}>
+                            {user.email}
+                        </MenuItem>
+                    ))}
+                </TextField>
 
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Add Custom Price</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        select
-                        fullWidth
-                        label="User"
-                        value={selectedUser}
-                        onChange={(e) => setSelectedUser(e.target.value)}
-                        sx={{ mt: 2, mb: 2 }}
-                    >
-                        {users.map((user) => (
-                            <MenuItem key={user._id} value={user._id}>
-                                {user.email}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        select
-                        fullWidth
-                        label="Product"
-                        value={selectedProduct}
-                        onChange={(e) => setSelectedProduct(e.target.value)}
-                        sx={{ mb: 2 }}
-                    >
-                        {products.map((product) => (
-                            <MenuItem key={product._id} value={product._id}>
-                                {product.name} (${product.price})
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        fullWidth
-                        label="Custom Price"
-                        type="number"
-                        value={customPrice}
-                        onChange={(e) => setCustomPrice(e.target.value)}
-                        inputProps={{ min: 0, step: 0.01 }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        disabled={!selectedUser || !selectedProduct || !customPrice}
-                    >
-                        Add
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                {selectedUser && (
+                    <>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                            <Tooltip title={hasChanges ? 'Save changes' : 'No changes to save'}>
+                                <span>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<SaveIcon />}
+                                        onClick={handleSave}
+                                        disabled={!hasChanges}
+                                    >
+                                        Save Changes
+                                    </Button>
+                                </span>
+                            </Tooltip>
+                        </Box>
+
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Product</TableCell>
+                                        <TableCell>Standard Price</TableCell>
+                                        <TableCell>Custom Price</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {products.map((product) => (
+                                        <TableRow key={product._id}>
+                                            <TableCell>{product.name}</TableCell>
+                                            <TableCell>${product.price.toFixed(2)}</TableCell>
+                                            <TableCell>
+                                                <TextField
+                                                    type="number"
+                                                    value={customPrices[product._id] || ''}
+                                                    onChange={(e) => handlePriceChange(product._id, e.target.value)}
+                                                    inputProps={{ 
+                                                        min: 0, 
+                                                        step: 0.01,
+                                                        style: { textAlign: 'right' }
+                                                    }}
+                                                    placeholder="No custom price"
+                                                    size="small"
+                                                    sx={{ width: '150px' }}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </>
+                )}
+            </Box>
         </Container>
     );
 };

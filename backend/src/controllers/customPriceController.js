@@ -7,6 +7,12 @@ const setCustomPrice = async (req, res) => {
     try {
         const { userId, productId, price } = req.body;
 
+        if (price === null) {
+            // Remove custom price if price is null
+            await CustomPrice.findOneAndDelete({ user: userId, product: productId });
+            return res.json({ message: 'Custom price removed' });
+        }
+
         // Validate user and product existence
         const [user, product] = await Promise.all([
             User.findById(userId),

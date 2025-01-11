@@ -4,20 +4,25 @@ const CustomPrice = require('../models/CustomPrice');
 // Get all products
 const getProducts = async (req, res) => {
     try {
+        console.log('Getting products for user:', req.user?._id);
         const products = await Product.find();
         
         // If user is authenticated, fetch their custom prices
         if (req.user) {
+            console.log('User is authenticated, fetching custom prices');
             const customPrices = await CustomPrice.find({ user: req.user._id });
+            console.log('Found custom prices:', customPrices);
             
             // Create a map of product ID to custom price
             const customPriceMap = new Map(
                 customPrices.map(cp => [cp.product.toString(), cp.price])
             );
+            console.log('Custom price map:', Object.fromEntries(customPriceMap));
             
             // Add custom prices to products if they exist
             const productsWithCustomPrices = products.map(product => {
                 const customPrice = customPriceMap.get(product._id.toString());
+                console.log(`Product ${product._id}: standard=${product.price}, custom=${customPrice}`);
                 if (customPrice !== undefined) {
                     return {
                         ...product.toObject(),
@@ -32,6 +37,7 @@ const getProducts = async (req, res) => {
         }
         
         // For unauthenticated users, just return the products
+        console.log('User not authenticated, returning standard prices');
         res.json(products.map(product => product.toObject()));
     } catch (error) {
         console.error('Error in getProducts:', error);

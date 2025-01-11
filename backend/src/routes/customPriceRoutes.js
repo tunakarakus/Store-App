@@ -9,16 +9,11 @@ const {
 } = require('../controllers/customPriceController');
 const { auth, isAdmin } = require('../middleware/auth');
 
-// All routes require authentication
-router.use(auth);
-
 // Admin routes
-router.post('/', isAdmin, setCustomPrice);
-router.get('/all', isAdmin, getAllCustomPrices);
-router.delete('/:userId/:productId', isAdmin, deleteCustomPrice);
-
-// User routes
-router.get('/user/:userId', getUserCustomPrices);
-router.get('/:userId/:productId', getCustomPrice);
+router.get('/all', auth, isAdmin, getAllCustomPrices);
+router.get('/user/:userId', auth, isAdmin, getUserCustomPrices);
+router.post('/', auth, isAdmin, setCustomPrice);
+router.delete('/:userId/:productId', auth, isAdmin, deleteCustomPrice);
+router.get('/:userId/:productId', auth, isAdmin, getCustomPrice);
 
 module.exports = router; 

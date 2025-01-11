@@ -9,15 +9,12 @@ const productApi = axios.create({
     },
 });
 
-// Add auth token to requests only for protected routes
+// Add auth token to requests
 productApi.interceptors.request.use(
     (config) => {
-        // Only add token for admin operations (create, update, delete)
-        if (config.method !== 'get') {
-            const token = localStorage.getItem('token');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
