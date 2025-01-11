@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     AppBar,
     Box,
@@ -12,10 +12,17 @@ import {
     Avatar,
     Menu,
     MenuItem,
+    Drawer,
+    List,
+    ListItem,
+    ListItemText,
+    useTheme,
+    useMediaQuery,
 } from '@mui/material';
 import { 
     ShoppingCart as ShoppingCartIcon,
     Person as PersonIcon,
+    Menu as MenuIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -29,11 +36,16 @@ const Navbar = () => {
     const { user } = useSelector((state) => state.auth);
     const [showMegaMenu, setShowMegaMenu] = useState(false);
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const uniqueItemsCount = cartItems.length;
 
     const handleProductsHover = () => {
-        setShowMegaMenu(true);
+        if (!isMobile) {
+            setShowMegaMenu(true);
+        }
     };
 
     const handleMegaMenuClose = () => {
@@ -54,6 +66,61 @@ const Navbar = () => {
         navigate('/');
     };
 
+    const handleMobileMenuToggle = () => {
+        setMobileMenuOpen(!mobileMenuOpen);
+    };
+
+    const mobileMenuItems = [
+        { text: 'Products', link: '/products' },
+        { text: 'About Us', link: '/about' },
+        { text: 'Contact', link: '/contact' },
+    ];
+
+    const renderMobileMenu = () => (
+        <Drawer
+            anchor="right"
+            open={mobileMenuOpen}
+            onClose={() => setMobileMenuOpen(false)}
+            sx={{
+                '& .MuiDrawer-paper': {
+                    width: 240,
+                    boxSizing: 'border-box',
+                    bgcolor: 'background.paper',
+                    mt: '64px',
+                    pt: 2,
+                    zIndex: (theme) => theme.zIndex.drawer
+                }
+            }}
+        >
+            <List>
+                {mobileMenuItems.map((item) => (
+                    <ListItem
+                        key={item.text}
+                        component={RouterLink}
+                        to={item.link}
+                        onClick={() => setMobileMenuOpen(false)}
+                        sx={{
+                            color: 'text.primary',
+                            textDecoration: 'none',
+                            py: 1.5,
+                            '&:hover': {
+                                bgcolor: 'action.hover',
+                            }
+                        }}
+                    >
+                        <ListItemText primary={item.text} />
+                    </ListItem>
+                ))}
+            </List>
+        </Drawer>
+    );
+
+    useEffect(() => {
+        if (!isMobile && mobileMenuOpen) {
+            setMobileMenuOpen(false);
+        }
+    }, [isMobile]);
+
     return (
         <AppBar position="fixed" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Container maxWidth={false}>
@@ -73,22 +140,51 @@ const Navbar = () => {
                     >
                         BC FIBER
                     </Typography>
-                    <ClickAwayListener onClickAway={handleMegaMenuClose}>
-                        <Box 
-                            sx={{ 
-                                position: 'relative',
-                                '&:hover': {
-                                    '& > .MegaMenu': {
-                                        display: 'block',
-                                    }
-                                }
-                            }}
-                            onMouseEnter={handleProductsHover}
-                            onMouseLeave={handleMegaMenuClose}
-                        >
+
+                    {!isMobile && (
+                        <>
+                            <ClickAwayListener onClickAway={handleMegaMenuClose}>
+                                <Box 
+                                    sx={{ 
+                                        position: 'relative',
+                                        '&:hover': {
+                                            '& > .MegaMenu': {
+                                                display: 'block',
+                                            }
+                                        }
+                                    }}
+                                    onMouseEnter={handleProductsHover}
+                                    onMouseLeave={handleMegaMenuClose}
+                                >
+                                    <Button
+                                        component={RouterLink}
+                                        to="/products"
+                                        sx={{ 
+                                            color: 'text.primary',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent',
+                                                color: 'text.primary',
+                                            }
+                                        }}
+                                    >
+                                        Products
+                                    </Button>
+                                    <Box 
+                                        className="MegaMenu"
+                                        sx={{ 
+                                            display: showMegaMenu ? 'block' : 'none',
+                                            position: 'absolute',
+                                            top: '100%',
+                                            left: 0,
+                                        }}
+                                    >
+                                        <MegaMenu onClose={handleMegaMenuClose} />
+                                    </Box>
+                                </Box>
+                            </ClickAwayListener>
                             <Button
                                 component={RouterLink}
-                                to="/products"
+                                to="/about"
                                 sx={{ 
                                     color: 'text.primary',
                                     '&:hover': {
@@ -97,53 +193,30 @@ const Navbar = () => {
                                     }
                                 }}
                             >
-                                Products
+                                About Us
                             </Button>
-                            <Box 
-                                className="MegaMenu"
+                            <Button
+                                component={RouterLink}
+                                to="/contact"
                                 sx={{ 
-                                    display: showMegaMenu ? 'block' : 'none',
-                                    position: 'absolute',
-                                    top: '100%',
-                                    left: 0,
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        backgroundColor: 'transparent',
+                                        color: 'text.primary',
+                                    }
                                 }}
                             >
-                                <MegaMenu onClose={handleMegaMenuClose} />
-                            </Box>
-                        </Box>
-                    </ClickAwayListener>
-                    <Button
-                        component={RouterLink}
-                        to="/about"
-                        sx={{ 
-                            color: 'text.primary',
-                            '&:hover': {
-                                backgroundColor: 'transparent',
-                                color: 'text.primary',
-                            }
-                        }}
-                    >
-                        About Us
-                    </Button>
-                    <Button
-                        component={RouterLink}
-                        to="/contact"
-                        sx={{ 
-                            color: 'text.primary',
-                            '&:hover': {
-                                backgroundColor: 'transparent',
-                                color: 'text.primary',
-                            }
-                        }}
-                    >
-                        Contact
-                    </Button>
+                                Contact
+                            </Button>
+                        </>
+                    )}
+
                     <Box sx={{ flexGrow: 1 }} />
+
                     <IconButton
                         component={RouterLink}
                         to="/cart"
                         sx={{ 
-                            ml: 2,
                             color: 'text.primary',
                             '&:hover': {
                                 backgroundColor: 'transparent',
@@ -163,6 +236,7 @@ const Navbar = () => {
                             <ShoppingCartIcon />
                         </Badge>
                     </IconButton>
+
                     {user ? (
                         <>
                             <IconButton 
@@ -235,8 +309,21 @@ const Navbar = () => {
                             <PersonIcon sx={{ fontSize: 28 }} />
                         </IconButton>
                     )}
+
+                    {isMobile && (
+                        <IconButton
+                            edge="end"
+                            color="inherit"
+                            aria-label="menu"
+                            onClick={handleMobileMenuToggle}
+                            sx={{ ml: 2 }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    )}
                 </Toolbar>
             </Container>
+            {renderMobileMenu()}
         </AppBar>
     );
 };
