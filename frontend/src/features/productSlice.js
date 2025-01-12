@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { ENDPOINTS } from '../config';
 
 // Create axios instance
 const productApi = axios.create({
-    baseURL: 'http://localhost:5001/api/products',
+    baseURL: ENDPOINTS.PRODUCTS,
     headers: {
         'Content-Type': 'application/json',
     },
