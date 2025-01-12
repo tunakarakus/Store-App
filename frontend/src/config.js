@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = 'http://localhost:5001/api';
+export const API_BASE_URL = 'https://store-app-backend-2btt.onrender.com/api';
 
 // Derived API endpoints
 export const ENDPOINTS = {
